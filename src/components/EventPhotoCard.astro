@@ -1,0 +1,77 @@
+---
+// A past event with its cover photo. Opens the photo viewer.
+import Photo from './Photo.astro';
+import type { EventView } from '../lib/events';
+import { photosFor } from '../lib/photos';
+import { monthYear } from '../lib/events';
+
+interface Props {
+  event: EventView;
+  /** collab cards lead with the partner name */
+  variant?: 'collab' | 'night';
+}
+const { event: e, variant = 'night' } = Astro.props;
+const photos = photosFor(e.id);
+const cover = photos[0];
+const heading = variant === 'collab' ? (e.partner ?? e.title) : e.title;
+---
+
+<li class:list={['tile', variant]}>
+  <button
+    type="button"
+    class="open"
+    data-gallery={e.id}
+    disabled={!photos.length}
+  >
+    {
+      cover ? (
+        <Photo photo={cover} alt="" class="cover" />
+      ) : (
+        <span class="cover empty" />
+      )
+    }
+    <span class="text">
+      <span class="h">{heading}</span>
+      <span class="sub">
+        <time datetime={e.date}>{monthYear(e)}</time>
+        {e.bake && <> · {e.bake}</>}
+      </span>
+      {photos.length > 0 && <span class="sr-only">, view {photos.length} photos</span>}
+    </span>
+  </button>
+</li>
+
+<style>
+  .tile { list-style: none; }
+  .open {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--card);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: zoom-in;
+    transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+  }
+  .open:hover { transform: translateY(-4px); box-shadow: 0 16px 34px -14px rgb(168 116 72 / 0.5); }
+  .open:disabled { cursor: default; }
+  .open:disabled:hover { transform: none; }
+
+  :global(.cover) { aspect-ratio: 4 / 3; width: 100%; }
+  .night :global(.cover) { aspect-ratio: 1; }
+  .cover.empty { display: block; background: var(--blush); }
+  .open:hover :global(.cover img) { transform: scale(1.04); }
+  :global(.cover img) { transition: transform 0.5s var(--ease-out); }
+
+  .text { display: block; padding: 14px 16px 16px; }
+  .h { display: block; font-weight: 800; font-size: 1.08rem; line-height: 1.25; }
+  .sub { display: block; margin-top: 2px; font-size: 0.9rem; color: var(--ink-soft); }
+  .night .h { font-size: 1rem; }
+</style>

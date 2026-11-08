@@ -1,0 +1,135 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import paws from '../assets/brand/tiger-paws.png';
+import { site } from '../data/site';
+---
+
+<Base title="Join" description="How to join Baking Bad: GroupMe, Instagram, where we meet, and who to contact.">
+  <section class="section top">
+    <div class="wrap head">
+      <div>
+        <p class="pill">Everyone's welcome</p>
+        <h1>Come bake with us</h1>
+        <p class="lede">
+          Baking Bad is Princeton's all-inclusive student baking club. Learn the art and science of baking, meet people
+          who love it too, and take home free baked goods. Come bake and destress with us. Bring your friends too!
+        </p>
+      </div>
+      <Image src={paws} alt="" width={260} class="head-tiger" />
+    </div>
+  </section>
+
+  <section class="wrap" aria-labelledby="steps">
+    <h2 id="steps" class="sr-only">How to join</h2>
+    <ol class="steps">
+      <li class="card">
+        <span class="num" aria-hidden="true">1</span>
+        <h3>Join the GroupMe</h3>
+        <p>Bake night announcements, reminders, and last-minute updates.</p>
+        <a class="btn btn-primary" href={site.groupme} rel="noopener">Open GroupMe</a>
+      </li>
+      <li class="card">
+        <span class="num" aria-hidden="true">2</span>
+        <h3>Follow us on Instagram</h3>
+        <p>Recaps, recipes, and the first word on new events and collabs.</p>
+        <a class="btn btn-ghost" href={site.instagram.url} rel="noopener">{site.instagram.handle}</a>
+      </li>
+      <li class="card">
+        <span class="num" aria-hidden="true">3</span>
+        <h3>Show up and bake</h3>
+        <p>Come to any bake night. Follow the recipe, follow an officer, or freestyle. No experience needed.</p>
+        <a class="btn btn-ghost" href="/#coming-up">See what's next</a>
+      </li>
+    </ol>
+  </section>
+
+  <section class="section" aria-labelledby="details">
+    <div class="wrap details">
+      <h2 id="details" class="sr-only">Details</h2>
+      <div class="card info">
+        <h3>Where we bake</h3>
+        <ul>{site.kitchens.map((k) => <li>{k}</li>)}</ul>
+        <p class="muted">The exact kitchen for each bake is listed with the event.</p>
+      </div>
+      <div class="card info">
+        <h3>Dietary needs</h3>
+        <p>We do our best every week to make each bake work for gluten-free, vegan, and nut-free members. Let an officer know what you need.</p>
+      </div>
+      <div class="card info">
+        <h3>Questions?</h3>
+        <p>Email <a href={`mailto:${site.email}`}>{site.email}</a> or DM <a href={site.instagram.url}>{site.instagram.handle}</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" aria-labelledby="open">
+    <div class="statement">
+      <h2 id="open">Open membership</h2>
+      <p>{site.odusStatement}</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .top { padding-bottom: 32px; }
+  .head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .head h1 { margin-top: 14px; }
+  .lede { max-width: 60ch; margin: 0; font-size: 1.1rem; color: var(--ink-soft); }
+  :global(.head-tiger) { width: clamp(120px, 20vw, 180px); height: auto; flex: none; }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .steps li {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px;
+  }
+  .steps h3 { margin-top: 12px; }
+  .steps p { flex: 1; color: var(--ink-soft); }
+  .num {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    background: var(--apricot);
+    font-weight: 900;
+    -webkit-mask: url('/scallop.svg') center / 100% 100% no-repeat;
+    mask: url('/scallop.svg') center / 100% 100% no-repeat;
+  }
+  .steps li:nth-child(2) .num { background: var(--coral); }
+  .steps li:nth-child(3) .num { background: var(--blush); }
+
+  .details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 18px;
+  }
+  .info { padding: 24px; }
+  .info ul { margin: 0 0 0.6em; padding-left: 1.1em; font-weight: 700; }
+  .info p:last-child { margin: 0; }
+
+  .statement {
+    padding: 28px;
+    border: 2px dashed var(--apricot);
+    border-radius: var(--radius);
+  }
+  .statement h2 { font-size: 1.3rem; }
+  .statement p { margin: 0; max-width: 75ch; }
+
+  @media (max-width: 560px) {
+    .head { flex-direction: column-reverse; align-items: flex-start; }
+  }
+</style>

@@ -1,0 +1,232 @@
+{
+  "$comment": "Which originals in media/bake_nights/<source>/ go on the site. First photo = cover. Edit, then run `npm run photos:build`.",
+  "events": {
+    "2025-12-04-alice-in-wonderland": {
+      "source": "1 __ Dec 4th - Alice in Wonderland",
+      "photos": [
+        "IMG_1338.HEIC",
+        "IMG_1297.HEIC",
+        "IMG_1318.HEIC",
+        "IMG_1328.HEIC",
+        "IMG_1351.HEIC",
+        "IMG_1362.HEIC",
+        "IMG_1368.HEIC"
+      ]
+    },
+    "2025-12-06-christmas": {
+      "source": "2 __ Dec 6th - XMAS",
+      "photos": [
+        "IMG_0153.HEIC",
+        "IMG_0141.HEIC",
+        "IMG_1416.HEIC",
+        "IMG_1419.HEIC",
+        "IMG_1424.HEIC",
+        "IMG_1436.HEIC",
+        "IMG_0158.HEIC"
+      ]
+    },
+    "2026-02-12-to-all-the-boys": {
+      "source": "3 __ Feb 12th - TATBILB",
+      "photos": [
+        "IMG_8693.HEIC",
+        "IMG_8686.HEIC",
+        "IMG_8692.HEIC",
+        "IMG_8694.HEIC",
+        "IMG_9206.HEIC",
+        "IMG_9209.HEIC"
+      ]
+    },
+    "2026-02-26-when-harry-met-sally": {
+      "source": "4 __ Feb 26th - When Harry Met Sally",
+      "photos": [
+        "IMG_2479.HEIC",
+        "IMG_2452.HEIC",
+        "IMG_2438.HEIC",
+        "IMG_2466.HEIC",
+        "IMG_2480.HEIC",
+        "IMG_2492.HEIC",
+        "IMG_2501.HEIC"
+      ]
+    },
+    "2026-03-19-tasa": {
+      "source": "5 __ Mar 19th - TASA Collab",
+      "photos": [
+        "IMG_3043.HEIC",
+        "IMG_0651.HEIC",
+        "IMG_3039.HEIC",
+        "IMG_0664.HEIC",
+        "IMG_0652.HEIC",
+        "IMG_3030.HEIC",
+        "IMG_3046.HEIC"
+      ]
+    },
+    "2026-03-26-cla": {
+      "source": "6 __ Mar 26th - CLA Collab",
+      "photos": [
+        "IMG_0704.HEIC",
+        "IMG_0721.HEIC",
+        "IMG_0737.HEIC",
+        "IMG_3143.HEIC",
+        "IMG_0725.HEIC",
+        "IMG_3116.HEIC",
+        "IMG_3147.HEIC"
+      ]
+    },
+    "2026-04-02-vsa": {
+      "source": "7 __ Apr 2nd - VSA Collab",
+      "photos": [
+        "IMG_3278.HEIC",
+        "IMG_3262.HEIC",
+        "IMG_3279.HEIC",
+        "IMG_3280.HEIC",
+        "IMG_3286.HEIC",
+        "IMG_3290.HEIC",
+        "IMG_3294.HEIC"
+      ]
+    },
+    "2026-04-03-pfc": {
+      "source": "8 __ Apr 3rd - PFC Collab",
+      "photos": [
+        "IMG_0859.HEIC",
+        "IMG_3314.HEIC",
+        "IMG_3318.HEIC",
+        "IMG_3336.HEIC",
+        "IMG_3355.HEIC",
+        "IMG_0865.HEIC",
+        "IMG_3361.HEIC"
+      ]
+    },
+    "2026-04-11-polish-society": {
+      "source": "9 __ Apr 11th - Poland Collab",
+      "photos": [
+        "IMG_3467.HEIC",
+        "IMG_3449.HEIC",
+        "IMG_3458.HEIC",
+        "IMG_3475.HEIC",
+        "IMG_3478.HEIC",
+        "IMG_3481.HEIC",
+        "IMG_3473.HEIC"
+      ]
+    },
+    "2026-04-30-french-francophone-society": {
+      "source": "10 __ Apr 30th - French & Francophone Society Collab",
+      "photos": [
+        "IMG_1146.HEIC",
+        "IMG_3852.HEIC",
+        "IMG_1143.HEIC",
+        "IMG_3883.HEIC",
+        "IMG_3908.HEIC",
+        "IMG_1160.HEIC",
+        "IMG_3922.HEIC"
+      ]
+    },
+    "2026-05-01-end-of-year-lava-cakes": {
+      "source": "11 __ May 1st - EOY Lava Cake",
+      "photos": [
+        "IMG_4025.HEIC",
+        "IMG_3980.HEIC",
+        "IMG_3986.HEIC",
+        "IMG_4004.HEIC",
+        "IMG_4020.HEIC",
+        "IMG_3993.HEIC",
+        "IMG_4008.HEIC"
+      ]
+    },
+    "2026-09-16-pumpkin-muffins": {
+      "source": "12 __ Sep 16th - Pumpkin Muffins",
+      "photos": [
+        "IMG_8786.HEIC",
+        "IMG_8772.HEIC",
+        "IMG_8775.HEIC",
+        "IMG_8776.HEIC",
+        "IMG_8781.HEIC",
+        "IMG_8780.HEIC"
+      ]
+    },
+    "2026-10-03-snap": {
+      "source": "13 __ Oct 3rd - SNAP Collab",
+      "photos": [
+        "IMG_8959.HEIC",
+        "IMG_8935.HEIC",
+        "IMG_8945.HEIC",
+        "IMG_8957.HEIC",
+        "IMG_8939.HEIC",
+        "IMG_8990.HEIC",
+        "IMG_8988.HEIC"
+      ]
+    },
+    "2026-10-29-sase": {
+      "source": "14 __ Oct 29th - SASE Collab",
+      "photos": [
+        "IMG_9260.HEIC",
+        "IMG_3776.jpeg",
+        "IMG_3786.jpeg",
+        "IMG_3810.jpeg",
+        "IMG_9257.HEIC",
+        "IMG_9265.HEIC"
+      ]
+    },
+    "2026-11-05-cla": {
+      "source": "15 __ Nov 5th - CLA 2nd Collab ",
+      "photos": [
+        "IMG_3491.HEIC",
+        "IMG_3461.HEIC",
+        "IMG_3466.HEIC",
+        "IMG_3465.HEIC",
+        "IMG_3495.HEIC",
+        "IMG_9377.HEIC",
+        "IMG_3456.HEIC"
+      ]
+    }
+  },
+  "loader": [
+    {
+      "event": "2025-12-06-christmas",
+      "photo": "IMG_0153.HEIC"
+    },
+    {
+      "event": "2026-04-02-vsa",
+      "photo": "IMG_3278.HEIC"
+    },
+    {
+      "event": "2026-04-30-french-francophone-society",
+      "photo": "IMG_1146.HEIC"
+    },
+    {
+      "event": "2026-02-26-when-harry-met-sally",
+      "photo": "IMG_2479.HEIC"
+    },
+    {
+      "event": "2026-10-29-sase",
+      "photo": "IMG_9260.HEIC"
+    },
+    {
+      "event": "2026-04-03-pfc",
+      "photo": "IMG_0859.HEIC"
+    },
+    {
+      "event": "2026-04-11-polish-society",
+      "photo": "IMG_3467.HEIC"
+    },
+    {
+      "event": "2026-05-01-end-of-year-lava-cakes",
+      "photo": "IMG_4025.HEIC"
+    },
+    {
+      "event": "2026-11-05-cla",
+      "photo": "IMG_3491.HEIC"
+    },
+    {
+      "event": "2026-03-19-tasa",
+      "photo": "IMG_3043.HEIC"
+    },
+    {
+      "event": "2025-12-04-alice-in-wonderland",
+      "photo": "IMG_1338.HEIC"
+    },
+    {
+      "event": "2026-09-16-pumpkin-muffins",
+      "photo": "IMG_8786.HEIC"
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+---
+// Once-per-session intro: "Baking [photo] Bad" rolls in, the center frame
+// flicks through bake photos, lands on the logo, then the curtain lifts.
+// Only shown when the inline script in Base.astro adds `html.intro-on`
+// (first visit this session, motion allowed, JS on).
+import { getImage } from 'astro:assets';
+import logo from '../assets/brand/logo.png';
+import { loaderFrames } from '../lib/photos';
+
+const logoImg = await getImage({ src: logo, width: 240, format: 'webp' });
+const frames = [...loaderFrames.map((f) => f.src), logoImg.src];
+const letters = (word: string) => [...word];
+---
+
+<div class="intro" aria-hidden="true" data-frames={JSON.stringify(frames)}>
+  <div class="mark">
+    <span class="word top">{letters('Baking').map((ch, i) => <span class="ch" style={`--i:${i}`}><span>{ch}</span></span>)}</span>
+    <span class="frame"><img src={frames[0]} alt="" width="240" height="240" loading="lazy" /></span>
+    <span class="word bottom">{letters('Bad').map((ch, i) => <span class="ch" style={`--i:${i + 3}`}><span>{ch}</span></span>)}</span>
+  </div>
+  <p class="skip">Tap or press any key to skip</p>
+</div>
+
+<script>
+  const root = document.documentElement;
+  const intro = document.querySelector<HTMLElement>('.intro');
+
+  if (intro && root.classList.contains('intro-on')) {
+    const frames: string[] = JSON.parse(intro.dataset.frames || '[]');
+    const img = intro.querySelector<HTMLImageElement>('.frame img')!;
+    const FRAME_MS = 95;
+    let finished = false;
+    const timers: number[] = [];
+    const later = (fn: () => void, ms: number) => timers.push(window.setTimeout(fn, ms));
+
+    const done = () => {
+      root.classList.remove('intro-on', 'intro-leave');
+      intro.remove();
+      try {
+        sessionStorage.setItem('bb-intro', '1');
+      } catch {}
+    };
+
+    const leave = () => {
+      if (finished) return;
+      finished = true;
+      timers.forEach(clearTimeout);
+      img.src = frames[frames.length - 1];
+      root.classList.add('intro-leave');
+      intro.addEventListener('transitionend', done, { once: true });
+      later(done, 1000); // in case transitionend never fires
+    };
+
+    const preload = Promise.all(
+      frames.map(
+        (src) =>
+          new Promise<void>((res) => {
+            const im = new Image();
+            im.onload = im.onerror = () => res();
+            im.src = src;
+          }),
+      ),
+    );
+    const fonts = document.fonts?.load('1em Pacifico').catch(() => {}) ?? Promise.resolve();
+    const timeout = new Promise((res) => setTimeout(res, 1200));
+
+    Promise.race([Promise.all([preload, fonts]), timeout]).then(() => {
+      if (finished) return;
+      intro.classList.add('play');
+      // Photos start flicking once the frame has popped in (~450ms).
+      frames.forEach((src, i) => later(() => (img.src = src), 450 + i * FRAME_MS));
+      later(leave, 450 + frames.length * FRAME_MS + 420);
+    });
+
+    const skip = () => leave();
+    intro.addEventListener('click', skip);
+    window.addEventListener('keydown', skip, { once: true });
+  }
+</script>
+
+<style>
+  .intro { display: none; }
+
+  :global(html.intro-on) { overflow: hidden; }
+  :global(html.intro-on) .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    background: var(--cream);
+    cursor: pointer;
+    transition: transform 0.7s cubic-bezier(0.76, 0, 0.24, 1);
+  }
+  :global(html.intro-leave) .intro { transform: translateY(-100%); }
+
+  .mark {
+    display: flex;
+    align-items: center;
+    gap: clamp(10px, 2.4vw, 28px);
+    font-family: var(--font-script);
+    font-size: clamp(3.4rem, 10vw, 8.5rem);
+    line-height: 1;
+    color: var(--coral-display);
+  }
+  .word { display: inline-flex; }
+  /* each letter rises out of its own mask */
+  .ch {
+    display: inline-block;
+    /* clip only along the bottom edge so letters rise out of it; Pacifico's
+       swashes stay visible on the sides and top */
+    clip-path: inset(-1em -0.6em 0 -0.6em);
+    padding-bottom: 0.36em;
+    margin-bottom: -0.36em;
+  }
+  .ch > span {
+    display: inline-block;
+    transform: translateY(110%);
+  }
+  .play .ch > span {
+    transform: none;
+    transition: transform 0.65s var(--ease-out) calc(var(--i) * 45ms);
+  }
+
+  .frame {
+    position: relative;
+    width: 0.95em;
+    aspect-ratio: 1;
+    transform: scale(0);
+    -webkit-mask: url('/scallop.svg') center / 100% 100% no-repeat;
+    mask: url('/scallop.svg') center / 100% 100% no-repeat;
+    background: var(--blush);
+  }
+  .frame img { width: 100%; height: 100%; object-fit: cover; }
+  .play .frame {
+    transform: scale(1);
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s;
+  }
+
+  .skip {
+    position: absolute;
+    bottom: 24px;
+    left: 0;
+    right: 0;
+    margin: 0;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    opacity: 0;
+    transition: opacity 0.4s 0.8s;
+  }
+  .play .skip { opacity: 1; }
+
+  @media (max-width: 560px) {
+    .mark { flex-direction: column; gap: 6px; font-size: clamp(3.6rem, 19vw, 5rem); }
+    .frame { width: 1.5em; }
+  }
+</style>

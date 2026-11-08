@@ -1,0 +1,10 @@
+# Cloudflare Pages project config. Pages reads this when it builds from git,
+# so the R2 binding below is set up automatically.
+name = "bakingbad"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-11-01"
+
+# Event photos (see scripts/upload-photos.mjs and functions/media/[[path]].ts)
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "bakingbad-media"

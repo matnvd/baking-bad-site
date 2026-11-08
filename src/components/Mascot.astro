@@ -1,0 +1,47 @@
+---
+// The club tiger, dressed for the season: santa hat in December, valentine
+// in February, whisk the rest of the year. Picked in the browser so it stays
+// right without rebuilding the site.
+import { getImage } from 'astro:assets';
+import whisk from '../assets/brand/tiger-whisk.png';
+import santa from '../assets/brand/tiger-santa.png';
+import valentine from '../assets/brand/tiger-valentine.png';
+
+interface Props {
+  class?: string;
+  width?: number;
+}
+const { class: className, width = 200 } = Astro.props;
+const [w, s, v] = await Promise.all([whisk, santa, valentine].map((src) => getImage({ src, width, format: 'webp' })));
+---
+
+<img
+  class:list={['mascot', className]}
+  src={w.src}
+  data-santa={s.src}
+  data-valentine={v.src}
+  width={w.attributes.width}
+  height={w.attributes.height}
+  alt=""
+  loading="lazy"
+  decoding="async"
+/>
+
+<script>
+  const month = new Date().getMonth(); // 0 = Jan
+  const key = month === 11 ? 'santa' : month === 1 ? 'valentine' : null;
+  if (key) {
+    for (const img of document.querySelectorAll<HTMLImageElement>('img.mascot')) {
+      const src = img.dataset[key];
+      if (src) {
+        img.removeAttribute('width');
+        img.removeAttribute('height');
+        img.src = src;
+      }
+    }
+  }
+</script>
+
+<style>
+  .mascot { height: auto; }
+</style>

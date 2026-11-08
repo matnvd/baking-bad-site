@@ -1,0 +1,217 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Intro from '../components/Intro.astro';
+import Countdown from '../components/Countdown.astro';
+import UpcomingCard from '../components/UpcomingCard.astro';
+import EventPhotoCard from '../components/EventPhotoCard.astro';
+import PhotoViewer from '../components/PhotoViewer.astro';
+import logo from '../assets/brand/logo.png';
+import paws from '../assets/brand/tiger-paws.png';
+import { getEvents } from '../lib/events';
+import { site } from '../data/site';
+
+const { upcoming, past } = await getEvents();
+const collabs = past.filter((e) => e.kind === 'collab');
+const nights = past.filter((e) => e.kind !== 'collab');
+const partners = new Set(collabs.map((e) => e.partner ?? e.title));
+---
+
+<Base intro>
+  <Intro slot="intro" />
+
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <Image src={logo} alt="Baking Bad logo: a tiger cub holding a whisk, since 2025" width={520} height={534} class="hero-logo" loading="eager" fetchpriority="high" />
+      <h1>{site.tagline}.</h1>
+      <p class="lede">Themed bake nights, cultural collabs, and free baked goods. No experience needed. Bring your friends!</p>
+      <div class="btn-row center">
+        <a class="btn btn-primary" href="/join/">Join us</a>
+        <a class="btn btn-ghost" href={site.instagram.url} rel="noopener">{site.instagram.handle}</a>
+      </div>
+    </div>
+    <div class="wrap countdown-wrap">
+      <Countdown events={upcoming} />
+    </div>
+  </section>
+
+  {
+    upcoming.length > 0 && (
+      <section class="section tight" aria-labelledby="coming-up">
+        <div class="wrap">
+          <div class="section-head">
+            <h2 id="coming-up">Coming up</h2>
+            <p>Times and kitchens get posted here and on Instagram once they're set.</p>
+          </div>
+          <ul class="upcoming-list">
+            {upcoming.map((e) => <UpcomingCard event={e} />)}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section how" aria-labelledby="how">
+    <div class="wrap">
+      <div class="section-head center">
+        <h2 id="how">How it works</h2>
+        <p>Learn the art and science of baking, meet people who love it too, and take dessert home.</p>
+      </div>
+      <ol class="steps">
+        <li class="card">
+          <span class="num" aria-hidden="true">1</span>
+          <h3>A dessert a month</h3>
+          <p>Each month has a theme. Brownie month might be fudgy brownies one week, toffee-y blondies the next, and nutty brownies after that, with a general meeting for everyone in between.</p>
+        </li>
+        <li class="card">
+          <span class="num" aria-hidden="true">2</span>
+          <h3>Everyone eats</h3>
+          <p>We do our best every week to make each bake work for gluten-free, vegan, and nut-free members. Tell us what you need.</p>
+        </li>
+        <li class="card">
+          <span class="num" aria-hidden="true">3</span>
+          <h3>Bake your way</h3>
+          <p>Follow the recipe, follow an officer, or freestyle. Be your own baker. Total beginners are very welcome.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  {
+    collabs.length > 0 && (
+      <section class="section" aria-labelledby="collabs">
+        <div class="wrap">
+          <div class="section-head">
+            <h2 id="collabs">
+              Baked with <span class="script accent">{partners.size}</span> campus groups
+            </h2>
+            <p>Cultural orgs teach us a recipe from home, and we bring the kitchen. Tap a card for photos.</p>
+          </div>
+          <ul class="grid collabs-grid">
+            {collabs.map((e) => <EventPhotoCard event={e} variant="collab" />)}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    nights.length > 0 && (
+      <section class="section" aria-labelledby="nights">
+        <div class="wrap">
+          <div class="section-head">
+            <h2 id="nights">Bake nights</h2>
+            <p>Movie themes, holidays, and whatever the season calls for.</p>
+          </div>
+          <ul class="grid nights-grid">
+            {nights.map((e) => <EventPhotoCard event={e} variant="night" />)}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section join-band-wrap">
+    <div class="wrap">
+      <div class="join-band">
+        <Image src={paws} alt="" width={240} class="peek" />
+        <h2>Come bake and destress with us</h2>
+        <p>Open to every Princeton student. No baking experience required, just come hungry.</p>
+        <a class="btn btn-primary" href="/join/">How to join</a>
+      </div>
+    </div>
+  </section>
+
+  <PhotoViewer events={past} />
+</Base>
+
+<style>
+  .hero { padding: clamp(36px, 6vw, 64px) 0 0; }
+  .hero-inner { text-align: center; }
+  .hero-logo {
+    width: clamp(180px, 34vw, 260px);
+    height: auto;
+    margin: 0 auto 18px;
+    filter: drop-shadow(0 14px 22px rgb(168 116 72 / 0.28));
+  }
+  h1 { max-width: 20ch; margin-inline: auto; }
+  .lede {
+    max-width: 52ch;
+    margin: 0 auto 24px;
+    font-size: 1.12rem;
+    color: var(--ink-soft);
+  }
+  .countdown-wrap { max-width: 720px; margin-top: clamp(32px, 6vw, 56px); }
+
+  .section.tight { padding-top: clamp(48px, 7vw, 72px); padding-bottom: 0; }
+  .upcoming-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .steps li { padding: 24px; }
+  .steps h3 { margin-top: 12px; }
+  .steps p { margin: 0; color: var(--ink-soft); }
+  .num {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    background: var(--apricot);
+    font-weight: 900;
+    -webkit-mask: url('/scallop.svg') center / 100% 100% no-repeat;
+    mask: url('/scallop.svg') center / 100% 100% no-repeat;
+  }
+  .steps li:nth-child(2) .num { background: var(--coral); }
+  .steps li:nth-child(3) .num { background: var(--blush); }
+
+  .accent { font-size: 1.15em; padding: 0 0.05em; }
+
+  .grid {
+    display: grid;
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+  }
+  /* 3 across on desktop so 9 collabs / 6 nights fill whole rows */
+  .collabs-grid,
+  .nights-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+  @media (max-width: 680px) {
+    .collabs-grid,
+    .nights-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  }
+
+  .join-band {
+    position: relative;
+    margin-top: 40px;
+    padding: clamp(36px, 6vw, 52px) 24px 36px;
+    border-radius: calc(var(--radius) + 8px);
+    background: var(--apricot);
+    text-align: center;
+  }
+  .join-band h2 { margin-bottom: 0.3em; }
+  .join-band p { max-width: 46ch; margin: 0 auto 20px; }
+  .join-band .btn-primary { background: var(--cream); box-shadow: 0 4px 0 #e2a465; }
+  /* tiger peeking over the top edge of the band */
+  .peek {
+    position: absolute;
+    bottom: calc(100% - 1px);
+    left: 50%;
+    width: 112px;
+    height: auto;
+    transform: translateX(-50%);
+  }
+  .join-band-wrap { padding-top: 150px; }
+</style>

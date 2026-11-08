@@ -1,0 +1,57 @@
+---
+import type { EventView } from '../lib/events';
+
+interface Props {
+  event: EventView;
+}
+const { event: e } = Astro.props;
+const kindLabel = e.kind === 'collab' ? `Collab with ${e.partner ?? 'a campus group'}` : e.kind === 'special' ? 'Special event' : 'Bake night';
+---
+
+<li class="upcoming card" data-end={e.endISO}>
+  <div class="date" aria-hidden="true">
+    <span class="m">{e.month}</span>
+    <span class="d">{e.day}</span>
+  </div>
+  <div>
+    <h3>{e.title}</h3>
+    <p class="meta">
+      <time datetime={e.timeKnown ? e.startISO : e.date}>{e.weekday}, {e.month} {e.day}</time> · {e.timeLabel} · {
+        e.location ?? 'Location TBA'
+      }
+    </p>
+    <p class="kind">{kindLabel}</p>
+  </div>
+</li>
+
+<style>
+  .upcoming {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 18px 20px;
+  }
+  .date {
+    flex: none;
+    display: grid;
+    place-content: center;
+    width: 76px;
+    aspect-ratio: 1;
+    background: var(--blush);
+    text-align: center;
+    line-height: 1;
+    -webkit-mask: url('/scallop.svg') center / 100% 100% no-repeat;
+    mask: url('/scallop.svg') center / 100% 100% no-repeat;
+  }
+  .m {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--caramel-text);
+  }
+  .d { font-size: 1.6rem; font-weight: 900; }
+  h3 { margin: 0 0 2px; }
+  .meta { margin: 0; color: var(--ink-soft); font-weight: 600; }
+  .kind { margin: 4px 0 0; font-size: 0.85rem; font-weight: 700; color: var(--coral-text); }
+</style>

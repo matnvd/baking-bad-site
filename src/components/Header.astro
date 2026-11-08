@@ -1,0 +1,90 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/logo.png';
+import { nav, site } from '../data/site';
+
+const path = Astro.url.pathname.replace(/\/?$/, '/');
+---
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label={`${site.fullName}, home`}>
+      <Image src={logo} alt="" width={88} height={88} class="brand-logo" loading="eager" />
+      <span class="brand-name script" aria-hidden="true">Baking Bad</span>
+    </a>
+    <nav aria-label="Main">
+      <ul>
+        {
+          nav.map((item) => (
+            <li>
+              <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(255 250 242 / 0.88);
+    backdrop-filter: saturate(1.4) blur(10px);
+    -webkit-backdrop-filter: saturate(1.4) blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 68px;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .brand-logo {
+    width: 44px;
+    height: 44px;
+    transition: transform 0.4s var(--ease-out);
+  }
+  .brand:hover .brand-logo { transform: rotate(-10deg) scale(1.06); }
+  .brand-name {
+    font-size: 1.35rem;
+    line-height: 1;
+    padding-bottom: 4px; /* Pacifico sits high */
+  }
+  ul {
+    display: flex;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  nav a {
+    display: block;
+    padding: 8px 14px;
+    border-radius: 999px;
+    color: var(--ink);
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.2s;
+  }
+  nav a:hover { background: var(--blush); }
+  nav a[aria-current='page'] {
+    background: var(--ink);
+    color: var(--cream);
+  }
+  @media (max-width: 420px) {
+    .brand-name { display: none; }
+    nav a { padding: 8px 12px; }
+  }
+</style>

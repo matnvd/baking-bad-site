@@ -1,0 +1,77 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/logo.png';
+import { nav, site } from '../data/site';
+import Mascot from './Mascot.astro';
+---
+
+<footer class="site-footer">
+  <div class="wrap grid">
+    <div class="brand">
+      <Image src={logo} alt="" width={128} height={128} class="logo" />
+      <div>
+        <p class="name script">Baking Bad</p>
+        <p class="muted small">Princeton University · since {site.since}</p>
+      </div>
+    </div>
+
+    <nav aria-label="Footer">
+      <ul>
+        {nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        <li><a href={site.instagram.url} rel="noopener">Instagram</a></li>
+        <li><a href={`mailto:${site.email}`}>Email us</a></li>
+      </ul>
+    </nav>
+
+    <Mascot class="footer-mascot" />
+  </div>
+
+  <div class="wrap fine">
+    <p>{site.odusStatement}</p>
+    <p>
+      {site.fullName} is a student organization at Princeton University. This site is not an official publication of
+      the University.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 40px;
+    padding: 48px 0 32px;
+    background: var(--blush);
+    border-top: 1px solid var(--line);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 24px 40px;
+    align-items: center;
+  }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .logo { width: 64px; height: 64px; }
+  .name { margin: 0; font-size: 1.5rem; line-height: 1.3; }
+  .small { margin: 0; font-size: 0.9rem; }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  ul a { color: var(--ink); font-weight: 700; }
+  :global(.footer-mascot) { width: 96px; }
+  .fine {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px dashed #e9c2b3;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+  .fine p { margin: 0 0 0.5em; max-width: 90ch; }
+  @media (max-width: 720px) {
+    .grid { grid-template-columns: 1fr auto; }
+    nav { grid-column: 1 / -1; grid-row: 2; }
+  }
+</style>

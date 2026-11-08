@@ -1,0 +1,127 @@
+---
+// One shared <dialog> for every event's photos. Any element with
+// data-gallery="<event id>" opens it. Arrow keys / buttons to move,
+// Esc or the close button to exit; focus returns to the card.
+import type { EventView } from '../lib/events';
+import { photosFor, galleryItem } from '../lib/photos';
+
+interface Props {
+  events: EventView[];
+}
+const galleries = Object.fromEntries(
+  Astro.props.events
+    .map((e) => [e.id, { title: e.title, photos: photosFor(e.id).map(galleryItem) }] as const)
+    .filter(([, g]) => g.photos.length),
+);
+---
+
+<dialog class="viewer" aria-labelledby="viewer-title">
+  <div class="top">
+    <p id="viewer-title" class="title"></p>
+    <button type="button" class="btn btn-ghost close">Close</button>
+  </div>
+  <figure>
+    <picture>
+      <source type="image/avif" sizes="(min-width: 1000px) 960px, 100vw" />
+      <source type="image/webp" sizes="(min-width: 1000px) 960px, 100vw" />
+      <img alt="" />
+    </picture>
+  </figure>
+  <div class="nav">
+    <button type="button" class="btn btn-ghost prev" aria-label="Previous photo">←</button>
+    <p class="count" aria-live="polite"></p>
+    <button type="button" class="btn btn-ghost next" aria-label="Next photo">→</button>
+  </div>
+  <script is:inline type="application/json" set:html={JSON.stringify(galleries)} />
+</dialog>
+
+<script>
+  type Item = { avif: string; webp: string; src: string; w: number; h: number; color: string };
+  type Gallery = { title: string; photos: Item[] };
+
+  const dialog = document.querySelector<HTMLDialogElement>('dialog.viewer');
+  if (dialog) {
+    const data: Record<string, Gallery> = JSON.parse(dialog.querySelector('script')!.textContent || '{}');
+    const [avif, webp] = dialog.querySelectorAll('source');
+    const img = dialog.querySelector('img')!;
+    const title = dialog.querySelector<HTMLElement>('.title')!;
+    const count = dialog.querySelector<HTMLElement>('.count')!;
+    let gallery: Gallery | null = null;
+    let index = 0;
+    let opener: HTMLElement | null = null;
+
+    const render = () => {
+      if (!gallery) return;
+      const p = gallery.photos[index];
+      avif.srcset = p.avif;
+      webp.srcset = p.webp;
+      img.src = p.src;
+      img.width = p.w;
+      img.height = p.h;
+      img.alt = `${gallery.title}, photo ${index + 1} of ${gallery.photos.length}`;
+      count.textContent = `${index + 1} / ${gallery.photos.length}`;
+    };
+    const step = (d: number) => {
+      if (!gallery) return;
+      index = (index + d + gallery.photos.length) % gallery.photos.length;
+      render();
+    };
+
+    document.addEventListener('click', (ev) => {
+      const btn = (ev.target as HTMLElement).closest<HTMLElement>('[data-gallery]');
+      if (!btn) return;
+      const g = data[btn.dataset.gallery!];
+      if (!g) return;
+      gallery = g;
+      index = 0;
+      opener = btn;
+      title.textContent = g.title;
+      render();
+      dialog.showModal();
+    });
+
+    dialog.querySelector('.prev')!.addEventListener('click', () => step(-1));
+    dialog.querySelector('.next')!.addEventListener('click', () => step(1));
+    dialog.querySelector('.close')!.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('keydown', (ev) => {
+      if (ev.key === 'ArrowLeft') step(-1);
+      if (ev.key === 'ArrowRight') step(1);
+    });
+    // click on the backdrop closes
+    dialog.addEventListener('click', (ev) => {
+      if (ev.target === dialog) dialog.close();
+    });
+    dialog.addEventListener('close', () => opener?.focus());
+  }
+</script>
+
+<style>
+  .viewer {
+    width: min(1000px, 100vw - 24px);
+    max-height: calc(100dvh - 24px);
+    padding: 16px;
+    border: none;
+    border-radius: var(--radius);
+    background: var(--cream);
+    color: var(--ink);
+  }
+  .viewer::backdrop { background: rgb(62 39 22 / 0.72); }
+  .top, .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .title { margin: 0; font-weight: 800; font-size: 1.1rem; }
+  figure { margin: 12px 0; }
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: calc(100dvh - 190px);
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+  }
+  .count { margin: 0; font-weight: 700; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .btn { padding: 0.6em 1.2em; }
+</style>

@@ -1,0 +1,165 @@
+---
+// Countdown to the next bake. Rendered at build time for the next event,
+// then kept honest in the browser: it skips events that have ended (static
+// pages go stale) and ticks every second.
+// Time known → days / hrs / min / sec. Time TBA → "N days to go".
+// Phase 2: replace Date.now() with server time from the signup Worker.
+import type { EventView } from '../lib/events';
+import { site } from '../data/site';
+
+interface Props {
+  events: EventView[]; // upcoming, soonest first
+}
+const { events } = Astro.props;
+const next = events[0];
+const payload = events.map((e) => ({
+  title: e.title,
+  start: e.startISO,
+  end: e.endISO,
+  timeKnown: e.timeKnown,
+  longDate: e.longDate,
+  meta: [e.dateLabel, e.timeLabel, e.location ?? 'Location TBA'].join(' · '),
+}));
+---
+
+<section class="countdown card" aria-labelledby="cd-heading" data-events={JSON.stringify(payload)}>
+  <div class="cd-live" hidden={!next}>
+    <p class="pill">Next bake</p>
+    <h2 id="cd-heading" class="cd-title">{next?.title}</h2>
+    <p class="cd-meta">
+      {next && <time datetime={next.timeKnown ? next.startISO : next.date}>{next.dateLabel}</time>}
+      <span class="cd-rest">{next && ` · ${next.timeLabel} · ${next.location ?? 'Location TBA'}`}</span>
+    </p>
+
+    <div class="cd-clock" aria-hidden="true" hidden>
+      <div class="tile" data-unit="days"><span class="num">–</span><span class="unit">days</span></div>
+      <div class="tile timed" data-unit="hours"><span class="num">–</span><span class="unit">hrs</span></div>
+      <div class="tile timed" data-unit="minutes"><span class="num">–</span><span class="unit">min</span></div>
+      <div class="tile timed" data-unit="seconds"><span class="num">–</span><span class="unit">sec</span></div>
+      <p class="cd-now">Happening now!</p>
+    </div>
+  </div>
+
+  <div class="cd-empty" hidden={Boolean(next)}>
+    <p class="pill soft">Next bake</p>
+    <h2 class="cd-title">Nothing on the calendar yet</h2>
+    <p class="cd-meta">
+      New bake nights get announced on Instagram first. Follow <a href={site.instagram.url}>{site.instagram.handle}</a>.
+    </p>
+  </div>
+</section>
+
+<script>
+  type Ev = { title: string; start: string; end: string; timeKnown: boolean; longDate: string; meta: string };
+
+  for (const root of document.querySelectorAll<HTMLElement>('.countdown')) {
+    const events: Ev[] = JSON.parse(root.dataset.events || '[]');
+    const live = root.querySelector<HTMLElement>('.cd-live')!;
+    const empty = root.querySelector<HTMLElement>('.cd-empty')!;
+    const clock = root.querySelector<HTMLElement>('.cd-clock')!;
+    const title = live.querySelector<HTMLElement>('.cd-title')!;
+    const time = live.querySelector<HTMLTimeElement>('time');
+    const rest = live.querySelector<HTMLElement>('.cd-rest')!;
+    const num = (unit: string) => clock.querySelector<HTMLElement>(`[data-unit="${unit}"] .num`)!;
+    const unitLabel = clock.querySelector<HTMLElement>('[data-unit="days"] .unit')!;
+    let shown: Ev | null = null;
+
+    // Phase 2 hook: swap for a server-synced clock.
+    const now = () => Date.now();
+
+    const show = (ev: Ev) => {
+      shown = ev;
+      title.textContent = ev.title;
+      const [date, ...others] = ev.meta.split(' · ');
+      if (time) {
+        time.textContent = date;
+        time.dateTime = ev.timeKnown ? ev.start : ev.start.slice(0, 10);
+      }
+      rest.textContent = ' · ' + others.join(' · ');
+      clock.classList.toggle('tba', !ev.timeKnown);
+    };
+
+    const tick = () => {
+      const t = now();
+      const ev = events.find((e) => Date.parse(e.end) > t);
+      if (!ev) {
+        live.hidden = true;
+        empty.hidden = false;
+        return false;
+      }
+      if (ev !== shown) show(ev);
+      clock.hidden = false;
+
+      const ms = Date.parse(ev.start) - t;
+      clock.classList.toggle('now', ms <= 0 && ev.timeKnown);
+      if (ev.timeKnown) {
+        const s = Math.max(0, Math.floor(ms / 1000));
+        num('days').textContent = String(Math.floor(s / 86400));
+        num('hours').textContent = String(Math.floor((s % 86400) / 3600)).padStart(2, '0');
+        num('minutes').textContent = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+        num('seconds').textContent = String(s % 60).padStart(2, '0');
+        unitLabel.textContent = 'days';
+      } else {
+        // Time TBA: whole days only. On the day itself, say so.
+        const days = Math.ceil(ms / 86400000);
+        num('days').textContent = days <= 0 ? 'Today!' : String(days);
+        unitLabel.textContent = days <= 0 ? 'time TBA' : days === 1 ? 'day to go' : 'days to go';
+      }
+      return true;
+    };
+
+    if (tick()) setInterval(tick, 1000);
+  }
+</script>
+
+<style>
+  .countdown {
+    padding: clamp(24px, 4vw, 36px);
+    text-align: center;
+  }
+  .cd-title {
+    margin: 14px 0 4px;
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+  }
+  .cd-meta { margin: 0; color: var(--ink-soft); font-weight: 600; }
+  .cd-clock {
+    display: flex;
+    justify-content: center;
+    gap: clamp(8px, 2vw, 16px);
+    margin-top: 22px;
+    flex-wrap: wrap;
+  }
+  .cd-clock[hidden] { display: none; }
+  .tile {
+    display: grid;
+    place-content: center;
+    width: clamp(70px, 17vw, 96px);
+    aspect-ratio: 1;
+    background: var(--apricot);
+    -webkit-mask: url('/scallop.svg') center / 100% 100% no-repeat;
+    mask: url('/scallop.svg') center / 100% 100% no-repeat;
+  }
+  .tile:nth-child(2) { background: var(--coral); }
+  .tile:nth-child(3) { background: var(--blush); }
+  .tile:nth-child(4) { background: #fde3c8; }
+  .num {
+    font-size: clamp(1.5rem, 4.4vw, 2.1rem);
+    font-weight: 900;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .unit {
+    margin-top: 2px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  /* time TBA: one larger tile */
+  .tba .timed { display: none; }
+  .tba .tile { width: clamp(124px, 30vw, 150px); }
+  .tba .num { font-size: clamp(2.1rem, 6vw, 2.8rem); }
+  .cd-now { display: none; margin: 0; font-weight: 800; font-size: 1.3rem; }
+  .now .tile { display: none; }
+  .now .cd-now { display: block; }
+</style>

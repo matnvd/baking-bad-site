@@ -1,3 +1,18 @@
+# local planning notes
 /cc-plans
-/media
+
+# dependencies & build output
+node_modules/
+dist/
+.astro/
+.wrangler/
+
+# raw club media (4+ GB of originals) and locally built photo variants — never commit
+/media/
+public/media/
+
+# secrets
+.env
+.dev.vars
+
 .DS_Store

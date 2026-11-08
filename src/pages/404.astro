@@ -1,0 +1,22 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import paws from '../assets/brand/tiger-paws.png';
+---
+
+<Base title="Page not found">
+  <section class="section">
+    <div class="wrap nf">
+      <Image src={paws} alt="" width={260} class="tiger" />
+      <h1>This page didn't rise</h1>
+      <p class="muted">We couldn't find what you were looking for. It may have moved, or the oven ate it.</p>
+      <a class="btn btn-primary" href="/">Back home</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf { text-align: center; }
+  :global(.tiger) { width: 150px; height: auto; margin: 0 auto 16px; }
+  p { margin-bottom: 24px; }
+</style>

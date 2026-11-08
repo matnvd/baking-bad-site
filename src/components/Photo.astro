@@ -1,0 +1,35 @@
+---
+import { type Photo, srcset, fallbackSrc } from '../lib/photos';
+
+interface Props {
+  photo: Photo;
+  alt: string;
+  sizes?: string;
+  class?: string;
+  eager?: boolean;
+}
+const { photo, alt, sizes = '(min-width: 1100px) 360px, (min-width: 640px) 50vw, 100vw', class: className, eager = false } =
+  Astro.props;
+---
+
+<picture class:list={['photo', className]} style={`background-color:${photo.color}`}>
+  <source type="image/avif" srcset={srcset(photo, 'avif')} sizes={sizes} />
+  <source type="image/webp" srcset={srcset(photo, 'webp')} sizes={sizes} />
+  <img
+    src={fallbackSrc(photo)}
+    alt={alt}
+    width={photo.w}
+    height={photo.h}
+    loading={eager ? 'eager' : 'lazy'}
+    decoding="async"
+  />
+</picture>
+
+<style>
+  .photo { display: block; overflow: hidden; }
+  .photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>

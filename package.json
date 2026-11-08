@@ -1,0 +1,31 @@
+{
+  "name": "baking-bad-site",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "npm run check && astro build",
+    "preview": "astro preview",
+    "check": "astro check && tsc -p functions",
+    "brand": "node scripts/prepare-brand.mjs",
+    "photos:build": "node scripts/build-photos.mjs",
+    "photos:upload": "node --env-file=.env scripts/upload-photos.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/nunito": "^5.3.0",
+    "@fontsource/pacifico": "^5.3.0",
+    "astro": "^7.4.7",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@aws-sdk/client-s3": "^3.1164.0",
+    "@cloudflare/workers-types": "^5.20261108.1",
+    "typescript": "^6.0.3",
+    "wrangler": "^4.158.0"
+  },
+  "allowScripts": {
+    "workerd@1.20261104.1": true
+  }
+}
