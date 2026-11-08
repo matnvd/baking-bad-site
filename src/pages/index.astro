@@ -16,6 +16,9 @@ import { site } from '../data/site';
 const { upcoming, past } = await getEvents();
 const collabs = past.filter((e) => e.kind === 'collab');
 const nights = past.filter((e) => e.kind !== 'collab');
+// The heading is set in four lines so the 1st and 4th can tuck into the
+// curve of the round logo next to it.
+const titleLines = ["Princeton's", 'all-inclusive', 'student', 'baking club.'];
 ---
 
 <Base intro>
@@ -24,8 +27,10 @@ const nights = past.filter((e) => e.kind !== 'collab');
   <section class="hero">
     <div class="wrap hero-grid">
       <div class="hero-text">
-        <Image src={logo} alt="Baking Bad logo: a tiger cub holding a whisk, since 2025" width={300} height={308} class="hero-logo" loading="eager" fetchpriority="high" />
-        <h1>{site.tagline}.</h1>
+        <div class="hero-head">
+          <Image src={logo} alt="Baking Bad logo: a tiger cub holding a whisk, since 2025" width={400} height={411} class="hero-logo" loading="eager" fetchpriority="high" />
+          <h1>{titleLines.map((line) => <span class="line">{line} </span>)}</h1>
+        </div>
         <p class="lede">Themed bake nights, cultural collabs, free baked goods. No experience needed.</p>
         <div class="btn-row">
           <a class="btn btn-primary" href="/join/">Join us</a>
@@ -75,14 +80,32 @@ const nights = past.filter((e) => e.kind !== 'collab');
     gap: clamp(24px, 5vw, 56px);
     align-items: center;
   }
+  /* Logo on the left, heading on the right. Lines 1 and 4 sit level with the
+     top and bottom of the round badge, where it curves away, so they're
+     pulled left (--hug) to follow the circle. */
+  .hero-head {
+    --logo: clamp(150px, 16vw, 200px);
+    --hug: calc(var(--logo) * 0.16);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
   .hero-logo {
-    width: clamp(110px, 14vw, 150px);
+    flex: none;
+    width: var(--logo);
     height: auto;
-    margin-bottom: 14px;
     filter: drop-shadow(0 10px 18px rgb(168 116 72 / 0.25));
   }
-  h1 { max-width: 16ch; margin-bottom: 0.3em; }
-  .lede { max-width: 42ch; margin-bottom: 22px; font-size: 1.1rem; color: var(--ink-soft); }
+  h1 {
+    margin: 0;
+    font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+    line-height: 1.1;
+  }
+  .line { display: block; }
+  .line:first-child,
+  .line:last-child { margin-left: calc(var(--hug) * -1); }
+  .lede { margin-bottom: 22px; font-size: 1.1rem; color: var(--ink-soft); }
 
   .stack {
     display: grid;
@@ -107,7 +130,7 @@ const nights = past.filter((e) => e.kind !== 'collab');
     transition: transform 0.2s var(--ease-out);
   }
   .join-band:hover { transform: translateY(-3px); }
-  .join-band strong { font-weight: 900; }
+  .join-band strong { font-family: var(--font-display); font-weight: 700; }
   .arrow { margin-left: auto; font-size: 1.4rem; font-weight: 900; }
   .peek {
     position: absolute;
@@ -120,8 +143,11 @@ const nights = past.filter((e) => e.kind !== 'collab');
   @media (max-width: 820px) {
     .hero-grid { grid-template-columns: 1fr; }
     .hero-text { text-align: center; }
-    .hero-logo { margin-inline: auto; }
-    h1, .lede { margin-inline: auto; }
+    .hero-head { flex-direction: column; gap: 12px; }
+    .hero-logo { width: 140px; }
+    .line:first-child,
+    .line:last-child { margin-left: 0; }
+    .lede { margin-inline: auto; max-width: 42ch; }
     .btn-row { justify-content: center; }
   }
   @media (max-width: 560px) {

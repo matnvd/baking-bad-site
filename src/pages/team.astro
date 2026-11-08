@@ -103,7 +103,7 @@ const tints = ['var(--apricot)', 'var(--coral)', 'var(--blush)', '#fde3c8'];
     height: 88px;
     margin-bottom: 14px;
     font-size: 1.5rem;
-    font-weight: 900;
+    font-family: var(--font-display); font-weight: 700;
     letter-spacing: 0.02em;
     color: var(--ink);
     -webkit-mask: url('/scallop.svg') center / 100% 100% no-repeat;
@@ -111,7 +111,7 @@ const tints = ['var(--apricot)', 'var(--coral)', 'var(--blush)', '#fde3c8'];
     transition: transform 0.4s var(--ease-out);
   }
   .member:hover .avatar { transform: rotate(-12deg); }
-  .name { font-weight: 800; line-height: 1.3; }
+  .name { font-family: var(--font-display); font-weight: 700; line-height: 1.3; }
   .role { margin-top: 2px; font-size: 0.92rem; color: var(--ink-soft); }
 
   .term { margin-top: 24px; }
@@ -129,7 +129,7 @@ const tints = ['var(--apricot)', 'var(--coral)', 'var(--blush)', '#fde3c8'];
     padding: 0;
     list-style: none;
   }
-  .past-list .name { font-weight: 700; }
+  .past-list .name { font-family: var(--font-body); font-weight: 700; }
 
   @media (max-width: 560px) {
     .head { flex-direction: column-reverse; align-items: flex-start; }

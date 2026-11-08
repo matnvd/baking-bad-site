@@ -59,7 +59,7 @@ partnerShort: VSA                          # collabs: shown as "BB × VSA"
 bake: Pandan honeycomb cake (bánh bò nướng)  # what we made (optional)
 ```
 
-Commit and push. Cloudflare rebuilds in about a minute. The countdown picks the next event automatically, and past events move from "Coming up" into Collaborations or Bake nights on their own (no rebuild needed for that). Always quote `time` values.
+Commit and push. Cloudflare rebuilds in about a minute. (If `npm run dev` ever shows outdated event data after editing `content.config.ts`, run `npm run clean` and restart it.) The countdown picks the next event automatically, and past events move from "Coming up" into Collaborations or Bake nights on their own (no rebuild needed for that). Always quote `time` values.
 
 ### Add photos for an event
 
@@ -103,7 +103,7 @@ To test the production setup locally: `npm run build && npx wrangler pages dev d
 ## Design notes
 
 - **Palette** (from the club's brand sheet): cream `#fffaf2`, blush `#f9ddd2`, apricot `#fdbb7f`, coral `#f89780`, caramel `#a87448`. Text uses darker derived shades (`--ink`, `--coral-text`, `--caramel-text` in `global.css`) so everything passes WCAG AA contrast. Use coral and apricot as fills, never for small text.
-- **Fonts:** Pacifico (script, only for the wordmark and accents) and Nunito, both self-hosted.
+- **Fonts:** Feather Bold (a free look-alike of Duolingo's font, CC BY 4.0, credited in the footer; keep that credit) for headings, buttons and labels; Nunito for body text; Pacifico only for the script wordmark. All self-hosted (`src/assets/fonts/`, `@fontsource`).
 - **Motifs:** the logo's scalloped edge (`public/scallop.svg`, used as a CSS mask) and the seasonal tiger (santa in December, valentine in February).
 - **Intro:** plays once per browser session, skippable with any key or tap, and never plays with reduced motion or with JavaScript off.
 - **Motion:** carousels and video loops have visible pause buttons, pause when off screen, and start paused for reduced-motion users.

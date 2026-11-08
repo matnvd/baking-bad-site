@@ -19,11 +19,11 @@ const fullName = e.kind === 'collab' && e.partnerShort ? e.partner : undefined;
     {cover ? <Photo photo={cover} alt="" class="cover" sizes="(min-width: 1100px) 340px, (min-width: 640px) 31vw, 72vw" /> : <span class="cover empty" />}
     <span class="text">
       <span class="h">{e.displayTitle}</span>
-      {fullName && <span class="org">{fullName}</span>}
       <span class="sub">
         <time datetime={e.date}>{monthYear(e)}</time>
         {e.bake && <> · {e.bake}</>}
       </span>
+      {fullName && <span class="org">{fullName}</span>}
       {photos.length > 0 && <span class="sr-only">, view {photos.length} photos</span>}
     </span>
   </button>
@@ -58,8 +58,23 @@ const fullName = e.kind === 'collab' && e.partnerShort ? e.partner : undefined;
   .open:hover :global(.cover img) { transform: scale(1.04); }
   :global(.cover img) { transition: transform 0.5s var(--ease-out); }
 
-  .text { display: block; padding: 12px 16px 16px; }
-  .h { display: block; font-weight: 900; font-size: 1.08rem; line-height: 1.25; }
-  .org { display: block; font-size: 0.85rem; font-weight: 700; color: var(--coral-text); }
+  .text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 12px 16px 14px;
+  }
+  .h { display: block; font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; line-height: 1.25; }
+  /* full partner name sits at the bottom of the card */
+  .org {
+    display: block;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--coral-text);
+  }
+  .sub { margin-bottom: 10px; }
   .sub { display: block; margin-top: 2px; font-size: 0.88rem; color: var(--ink-soft); }
 </style>

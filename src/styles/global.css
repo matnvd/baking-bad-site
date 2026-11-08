@@ -1,6 +1,18 @@
 @import '@fontsource/pacifico/400.css';
 @import '@fontsource-variable/nunito/wght.css';
 
+/* Feather Bold (free look-alike of Duolingo's font), CC BY 4.0 — credited in
+   the footer. See src/assets/fonts/FEATHER-BOLD-LICENSE.txt. One bold face,
+   declared across the weight range so browsers never fake-bold it. */
+@font-face {
+  font-family: 'Feather Bold';
+  src: url('../assets/fonts/feather-bold.woff2') format('woff2'),
+    url('../assets/fonts/feather-bold.woff') format('woff');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ------------------------------------------------------------------
    Tokens. Palette from the club's brand sheet; the *-text colors are
    deepened versions that pass WCAG AA for small text on cream.
@@ -26,6 +38,7 @@
 
   --font-script: 'Pacifico', 'Brush Script MT', cursive;
   --font-body: 'Nunito Variable', 'Nunito', ui-rounded, system-ui, sans-serif;
+  --font-display: 'Feather Bold', 'Nunito Variable', ui-rounded, system-ui, sans-serif;
 
   --radius: 22px;
   --radius-sm: 14px;
@@ -62,8 +75,9 @@ img { height: auto; }
 h1, h2, h3 {
   margin: 0 0 0.4em;
   line-height: 1.15;
-  font-weight: 800;
-  letter-spacing: -0.015em;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0;
   text-wrap: balance;
 }
 h1 { font-size: clamp(1.9rem, 4.6vw, 2.9rem); }
@@ -110,7 +124,8 @@ a:hover { text-decoration-thickness: 0.14em; }
   background: var(--caramel-text);
   color: var(--cream);
   font-size: 0.78rem;
-  font-weight: 800;
+  font-family: var(--font-display);
+  font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   line-height: 1.4;
@@ -140,7 +155,8 @@ a:hover { text-decoration-thickness: 0.14em; }
   border: 2px solid transparent;
   border-radius: 999px;
   font: inherit;
-  font-weight: 800;
+  font-family: var(--font-display);
+  font-weight: 700;
   line-height: 1.2;
   text-decoration: none;
   cursor: pointer;
@@ -152,9 +168,8 @@ a:hover { text-decoration-thickness: 0.14em; }
 .btn-primary {
   background: var(--coral);
   color: var(--ink);
-  box-shadow: 0 4px 0 #e07d66;
 }
-.btn-primary:hover { box-shadow: 0 6px 0 #e07d66; }
+.btn-primary:hover { background: #f6876d; }
 
 .btn-ghost {
   background: transparent;

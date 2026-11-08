@@ -2,8 +2,11 @@
 // Continuously drifting, endlessly looping row of cards.
 // - The cards are duplicated once (hidden from screen readers) so the loop is
 //   seamless; native swipe/scroll and the ← → buttons still work.
-// - Pauses while a card is hovered or keyboard-focused, when off screen, or
-//   when the tab is hidden; the pause button stops it for good (WCAG 2.2.2).
+// - Keeps drifting under the mouse. Pauses only while a card has keyboard
+//   focus, while being dragged, when off screen, or when the tab is hidden.
+//   The pause button, or using the ← → arrows, stops it (WCAG 2.2.2).
+// - Mouse users can click-and-drag the row (touch already swipes natively);
+//   a drag never counts as a click on a card.
 // - Starts paused for people who ask their OS to reduce motion.
 interface Props {
   id: string;
@@ -53,8 +56,8 @@ const { id, title, subtitle, speed = 32 } = Astro.props;
     const loopWidth = () => (track.children[originals.length] as HTMLElement).offsetLeft - originals[0].offsetLeft;
 
     let userPaused = reduce;
-    let hovered = false;
     let focused = false;
+    let dragging = false;
     let visible = false;
     let pos = track.scrollLeft; // float position; browsers may round scrollLeft
     let last = 0;
@@ -79,7 +82,7 @@ const { id, title, subtitle, speed = 32 } = Astro.props;
       raf = requestAnimationFrame(frame);
     };
 
-    const running = () => !userPaused && !hovered && !focused && visible && !document.hidden;
+    const running = () => !userPaused && !focused && !dragging && visible && !document.hidden;
     const sync = () => {
       root.classList.toggle('is-paused', userPaused);
       pauseBtn.setAttribute('aria-label', (userPaused ? pauseBtn.dataset.labelPlay : pauseBtn.dataset.labelPause)!);
@@ -97,17 +100,63 @@ const { id, title, subtitle, speed = 32 } = Astro.props;
       track.scrollBy({ left: dir * (first.offsetWidth + gap), behavior: reduce ? 'auto' : 'smooth' });
     };
 
-    root.querySelector('.next')!.addEventListener('click', () => step(1));
-    root.querySelector('.prev')!.addEventListener('click', () => step(-1));
+    // Using the arrows means "let me browse": stop the drift, then step.
+    const browse = (dir: 1 | -1) => {
+      userPaused = true;
+      sync();
+      step(dir);
+    };
+    root.querySelector('.next')!.addEventListener('click', () => browse(1));
+    root.querySelector('.prev')!.addEventListener('click', () => browse(-1));
+
+    // Click-and-drag with a mouse.
+    let startX = 0;
+    let startScroll = 0;
+    let moved = 0;
+    track.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      dragging = true;
+      moved = 0;
+      startX = e.clientX;
+      startScroll = track.scrollLeft;
+      sync();
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      moved = Math.max(moved, Math.abs(dx));
+      if (moved > 4 && !track.classList.contains('is-dragging')) {
+        track.classList.add('is-dragging');
+        track.setPointerCapture?.(e.pointerId);
+      }
+      track.scrollLeft = startScroll - dx;
+    });
+    const endDrag = () => {
+      if (!dragging) return;
+      dragging = false;
+      track.classList.remove('is-dragging');
+      pos = track.scrollLeft;
+      sync();
+    };
+    window.addEventListener('pointerup', endDrag);
+    window.addEventListener('pointercancel', endDrag);
+    // A drag that ends over a card shouldn't open its photos.
+    track.addEventListener(
+      'click',
+      (e) => {
+        if (moved > 4) {
+          e.preventDefault();
+          e.stopPropagation();
+          moved = 0;
+        }
+      },
+      true,
+    );
+    track.addEventListener('dragstart', (e) => e.preventDefault());
     pauseBtn.addEventListener('click', () => {
       userPaused = !userPaused;
       sync();
     });
-    // Only pause for a real mouse hovering a card (not touch, not the gaps).
-    track.addEventListener('pointerover', (e) => {
-      if (e.pointerType === 'mouse' && (e.target as HTMLElement).closest('li')) ((hovered = true), sync());
-    });
-    track.addEventListener('pointerleave', () => ((hovered = false), sync()));
     // Keyboard focus inside the track pauses it so focused cards don't slide away.
     track.addEventListener('focusin', (e) => {
       focused = (e.target as HTMLElement).matches(':focus-visible');
@@ -171,6 +220,11 @@ const { id, title, subtitle, speed = 32 } = Astro.props;
     scrollbar-width: none;
   }
   .track::-webkit-scrollbar { display: none; }
+  @media (pointer: fine) {
+    .track { cursor: grab; }
+    .track.is-dragging,
+    .track.is-dragging :global(*) { cursor: grabbing; user-select: none; }
+  }
   .track:focus-visible { outline-offset: 2px; }
   .track > :global(li) { flex: 0 0 clamp(210px, 31%, 340px); }
   @media (max-width: 640px) {

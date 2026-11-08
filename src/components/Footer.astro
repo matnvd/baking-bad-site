@@ -4,6 +4,9 @@ import logo from '../assets/brand/logo.png';
 import { nav, site } from '../data/site';
 import Mascot from './Mascot.astro';
 import ExternalLink from './ExternalLink.astro';
+
+// Break the statement before "of identity" on wide screens so it reads as two even lines.
+const [odusA, odusB] = site.odusStatement.split(/ (?=of identity)/);
 ---
 
 <footer class="site-footer">
@@ -28,7 +31,7 @@ import ExternalLink from './ExternalLink.astro';
   </div>
 
   <div class="wrap fine">
-    <p>{site.odusStatement}</p>
+    <p>{odusA}<br class="wide-br" /> {odusB}</p>
     <p>
       {site.fullName} is a student organization at Princeton University. This site is not an official publication of
       the University.
@@ -61,7 +64,7 @@ import ExternalLink from './ExternalLink.astro';
     padding: 0;
     list-style: none;
   }
-  ul a { color: var(--ink); font-weight: 700; }
+  ul a { color: var(--ink); font-family: var(--font-display); font-weight: 700; }
   :global(.footer-mascot) { width: 96px; }
   .fine {
     margin-top: 28px;
@@ -71,6 +74,10 @@ import ExternalLink from './ExternalLink.astro';
     color: var(--ink-soft);
   }
   .fine p { margin: 0 0 0.5em; }
+  .fine a { color: var(--ink); }
+  @media (max-width: 900px) {
+    .wide-br { display: none; }
+  }
   @media (max-width: 720px) {
     .grid { grid-template-columns: 1fr auto; }
     nav { grid-column: 1 / -1; grid-row: 2; }

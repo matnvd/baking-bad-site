@@ -1,7 +1,7 @@
 ---
-// A strip of short, muted bake-night loops. Each plays only while on screen,
-// tap a clip to pause it, and one button pauses them all (WCAG 2.2.2).
-// Never autoplays under reduced motion.
+// A strip of short, muted bake-night loops. They autoplay (pausing only while
+// scrolled off screen to save battery); tap a clip to pause it, and one button
+// pauses them all (WCAG 2.2.2).
 import { videos } from '../lib/photos';
 import { getEvents } from '../lib/events';
 
@@ -31,7 +31,8 @@ const titleOf = (id: string) => all.find((e) => e.id === id)?.displayTitle ?? ''
                 muted
                 loop
                 playsinline
-                preload="none"
+                autoplay
+                preload="metadata"
                 aria-label={`${v.label}, ${titleOf(v.event)} (muted video)`}
               />
               <figcaption>
@@ -51,8 +52,7 @@ const titleOf = (id: string) => all.find((e) => e.id === id)?.displayTitle ?? ''
   if (root) {
     const vids = [...root.querySelectorAll('video')];
     const toggle = root.querySelector<HTMLButtonElement>('.toggle')!;
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let allPaused = reduce;
+    let allPaused = false;
     const onScreen = new Set<HTMLVideoElement>();
     const userPaused = new Set<HTMLVideoElement>();
 
@@ -63,7 +63,6 @@ const titleOf = (id: string) => all.find((e) => e.id === id)?.displayTitle ?? ''
         const shouldPlay = !allPaused && !userPaused.has(v) && onScreen.has(v) && !document.hidden;
         if (shouldPlay && v.paused) v.play().catch(() => {});
         if (!shouldPlay && !v.paused) v.pause();
-        v.closest('figure')!.classList.toggle('is-paused', v.paused || !shouldPlay);
       }
     };
 
@@ -95,6 +94,12 @@ const titleOf = (id: string) => all.find((e) => e.id === id)?.displayTitle ?? ''
       update();
     });
     document.addEventListener('visibilitychange', update);
+    // Some browsers (e.g. Safari in Low Power Mode) block autoplay until the
+    // visitor interacts with the page; try again on the first tap/scroll/key.
+    const retry = () => update();
+    for (const ev of ['pointerdown', 'touchstart', 'scroll', 'keydown']) {
+      window.addEventListener(ev, retry, { once: true, passive: true });
+    }
     update();
   }
 </script>
@@ -163,22 +168,8 @@ const titleOf = (id: string) => all.find((e) => e.id === id)?.displayTitle ?? ''
     line-height: 1.25;
     pointer-events: none;
   }
-  .label { display: block; font-size: 0.82rem; font-weight: 800; }
+  .label { display: block; font-size: 0.82rem; font-family: var(--font-display); font-weight: 700; }
   .ev { display: block; font-size: 0.72rem; font-weight: 700; color: var(--coral-text); }
-  .is-paused::after {
-    content: '▶';
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: grid;
-    place-items: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 999px;
-    background: rgb(255 250 242 / 0.92);
-    font-size: 0.7rem;
-    pointer-events: none;
-  }
   @media (max-width: 900px) {
     .clips {
       display: flex;

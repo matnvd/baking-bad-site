@@ -45,7 +45,10 @@ import { site } from '../data/site';
         <span class="num" aria-hidden="true">3</span>
         <div>
           <h3>Sign up</h3>
-          <p>With a friend, if you like! No experience needed.</p>
+          <p>
+            Sign-ups for each bake will open here on the website (coming soon). Join the
+            <ExternalLink href={site.groupme}>GroupMe</ExternalLink> to hear the moment they open.
+          </p>
         </div>
       </li>
       <li>
@@ -131,7 +134,7 @@ import { site } from '../data/site';
     width: 40px;
     height: 40px;
     background: var(--apricot);
-    font-weight: 900;
+    font-family: var(--font-display); font-weight: 700;
     -webkit-mask: url('/scallop.svg') center / 100% 100% no-repeat;
     mask: url('/scallop.svg') center / 100% 100% no-repeat;
   }
@@ -146,7 +149,7 @@ import { site } from '../data/site';
     margin: 18px 0 0;
   }
   .facts .card { padding: 18px 20px; }
-  dt { font-weight: 900; margin-bottom: 4px; }
+  dt { font-family: var(--font-display); font-weight: 700; margin-bottom: 4px; }
   dd { margin: 0; font-size: 0.95rem; color: var(--ink-soft); }
 
   @media (max-width: 960px) {

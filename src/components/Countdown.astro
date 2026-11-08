@@ -154,14 +154,14 @@ const payload = events.map((e) => ({
   .tile:nth-child(4) { background: #fde3c8; }
   .num {
     font-size: clamp(1.5rem, 4.4vw, 2.1rem);
-    font-weight: 900;
+    font-family: var(--font-display); font-weight: 700;
     line-height: 1;
     font-variant-numeric: tabular-nums;
   }
   .unit {
     margin-top: 2px;
     font-size: 0.72rem;
-    font-weight: 800;
+    font-family: var(--font-display); font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
@@ -171,7 +171,7 @@ const payload = events.map((e) => ({
   .tba .num { font-size: clamp(2.1rem, 6vw, 2.8rem); }
   .cd-then { margin: 18px 0 0; font-size: 0.92rem; color: var(--ink-soft); }
   .cd-then[hidden] { display: none; }
-  .cd-now { display: none; margin: 0; font-weight: 800; font-size: 1.3rem; }
+  .cd-now { display: none; margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; }
   .now .tile { display: none; }
   .now .cd-now { display: block; }
 </style>
