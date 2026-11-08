@@ -17,6 +17,16 @@ const events = manifest.events as Record<string, Photo[]>;
 
 export const loaderFrames = manifest.loader as { src: string; color: string }[];
 
+export interface Video {
+  event: string;
+  label: string;
+  src: string;
+  poster: string;
+  w: number;
+  h: number;
+}
+export const videos = (manifest.videos ?? []) as Video[];
+
 export function photosFor(eventId: string): Photo[] {
   return events[eventId] ?? [];
 }

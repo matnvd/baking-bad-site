@@ -1,0 +1,196 @@
+---
+// A strip of short, muted bake-night loops. Each plays only while on screen,
+// tap a clip to pause it, and one button pauses them all (WCAG 2.2.2).
+// Never autoplays under reduced motion.
+import { videos } from '../lib/photos';
+import { getEvents } from '../lib/events';
+
+const { all } = await getEvents();
+const titleOf = (id: string) => all.find((e) => e.id === id)?.displayTitle ?? '';
+---
+
+{
+  videos.length > 0 && (
+    <section class="reel" aria-labelledby="reel-title">
+      <div class="head">
+        <h2 id="reel-title">In the kitchen</h2>
+        <button type="button" class="toggle" aria-label="Pause videos">
+          <span class="i-pause" aria-hidden="true">❚❚</span>
+          <span class="i-play" aria-hidden="true">▶</span>
+        </button>
+      </div>
+      <ul class="clips">
+        {videos.map((v) => (
+          <li>
+            <figure>
+              <video
+                src={v.src}
+                poster={v.poster}
+                width={v.w}
+                height={v.h}
+                muted
+                loop
+                playsinline
+                preload="none"
+                aria-label={`${v.label}, ${titleOf(v.event)} (muted video)`}
+              />
+              <figcaption>
+                <span class="label">{v.label}</span>
+                <span class="ev">{titleOf(v.event)}</span>
+              </figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+<script>
+  const root = document.querySelector<HTMLElement>('.reel');
+  if (root) {
+    const vids = [...root.querySelectorAll('video')];
+    const toggle = root.querySelector<HTMLButtonElement>('.toggle')!;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let allPaused = reduce;
+    const onScreen = new Set<HTMLVideoElement>();
+    const userPaused = new Set<HTMLVideoElement>();
+
+    const update = () => {
+      toggle.setAttribute('aria-label', allPaused ? 'Play videos' : 'Pause videos');
+      root.classList.toggle('all-paused', allPaused);
+      for (const v of vids) {
+        const shouldPlay = !allPaused && !userPaused.has(v) && onScreen.has(v) && !document.hidden;
+        if (shouldPlay && v.paused) v.play().catch(() => {});
+        if (!shouldPlay && !v.paused) v.pause();
+        v.closest('figure')!.classList.toggle('is-paused', v.paused || !shouldPlay);
+      }
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const v = e.target as HTMLVideoElement;
+          if (e.isIntersecting) onScreen.add(v);
+          else onScreen.delete(v);
+        }
+        update();
+      },
+      { threshold: 0.5 },
+    );
+    vids.forEach((v) => {
+      io.observe(v);
+      v.addEventListener('click', () => {
+        if (allPaused) {
+          allPaused = false;
+          userPaused.clear();
+        } else if (userPaused.has(v)) userPaused.delete(v);
+        else userPaused.add(v);
+        update();
+      });
+    });
+    toggle.addEventListener('click', () => {
+      allPaused = !allPaused;
+      userPaused.clear();
+      update();
+    });
+    document.addEventListener('visibilitychange', update);
+    update();
+  }
+</script>
+
+<style>
+  .head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  .head h2 { margin: 0; }
+  .toggle {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--card);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+  .toggle:hover { background: var(--blush); border-color: var(--apricot); }
+  .i-pause { font-size: 0.7rem; letter-spacing: -1px; }
+  .i-play { display: none; font-size: 0.8rem; }
+  .all-paused .i-play { display: inline; }
+  .all-paused .i-pause { display: none; }
+  .clips {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  figure {
+    position: relative;
+    margin: 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--blush);
+    box-shadow: var(--shadow);
+  }
+  video {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 9 / 16;
+    object-fit: cover;
+    cursor: pointer;
+  }
+  figcaption {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    padding: 6px 10px;
+    border-radius: 12px;
+    background: rgb(255 250 242 / 0.92);
+    line-height: 1.25;
+    pointer-events: none;
+  }
+  .label { display: block; font-size: 0.82rem; font-weight: 800; }
+  .ev { display: block; font-size: 0.72rem; font-weight: 700; color: var(--coral-text); }
+  .is-paused::after {
+    content: '▶';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    background: rgb(255 250 242 / 0.92);
+    font-size: 0.7rem;
+    pointer-events: none;
+  }
+  @media (max-width: 900px) {
+    .clips {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      padding-bottom: 6px;
+    }
+    .clips::-webkit-scrollbar { display: none; }
+    .clips li { flex: 0 0 40%; scroll-snap-align: start; }
+  }
+  @media (max-width: 560px) {
+    .clips li { flex-basis: 46%; }
+  }
+</style>

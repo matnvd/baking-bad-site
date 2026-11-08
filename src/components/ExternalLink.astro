@@ -1,0 +1,10 @@
+---
+// Link to another site (Instagram, GroupMe…). Opens in a new tab and tells
+// screen-reader users that it will.
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = HTMLAttributes<'a'> & { href: string };
+const { href, ...rest } = Astro.props;
+---
+
+<a href={href} target="_blank" rel="noopener noreferrer" {...rest}><slot /><span class="sr-only"> (opens in a new tab)</span></a>

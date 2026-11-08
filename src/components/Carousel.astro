@@ -1,0 +1,180 @@
+---
+// Continuously drifting, endlessly looping row of cards.
+// - The cards are duplicated once (hidden from screen readers) so the loop is
+//   seamless; native swipe/scroll and the ← → buttons still work.
+// - Pauses while a card is hovered or keyboard-focused, when off screen, or
+//   when the tab is hidden; the pause button stops it for good (WCAG 2.2.2).
+// - Starts paused for people who ask their OS to reduce motion.
+interface Props {
+  id: string;
+  title: string;
+  subtitle?: string;
+  /** drift speed in px per second */
+  speed?: number;
+}
+const { id, title, subtitle, speed = 32 } = Astro.props;
+---
+
+<section class="carousel" aria-roledescription="carousel" aria-labelledby={`${id}-title`} data-speed={speed}>
+  <div class="head">
+    <div>
+      <h2 id={`${id}-title`}>{title}</h2>
+      {subtitle && <p class="muted">{subtitle}</p>}
+    </div>
+    <div class="controls">
+      <button type="button" class="ctl prev" aria-label={`Previous, ${title}`}>←</button>
+      <button type="button" class="ctl pause" aria-label={`Pause ${title}`} data-label-pause={`Pause ${title}`} data-label-play={`Play ${title}`}>
+        <span class="i-pause" aria-hidden="true">❚❚</span><span class="i-play" aria-hidden="true">▶</span>
+      </button>
+      <button type="button" class="ctl next" aria-label={`Next, ${title}`}>→</button>
+    </div>
+  </div>
+  <ul class="track" tabindex="0" aria-label={title}>
+    <slot />
+  </ul>
+</section>
+
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  for (const root of document.querySelectorAll<HTMLElement>('.carousel')) {
+    const track = root.querySelector<HTMLElement>('.track')!;
+    const pauseBtn = root.querySelector<HTMLButtonElement>('.pause')!;
+    const speed = Number(root.dataset.speed) || 32;
+    const originals = [...track.children] as HTMLElement[];
+
+    // Duplicate the cards once so drifting past the end wraps seamlessly.
+    for (const li of originals) {
+      const copy = li.cloneNode(true) as HTMLElement;
+      copy.setAttribute('aria-hidden', 'true');
+      copy.querySelectorAll('button, a, [tabindex]').forEach((el) => el.setAttribute('tabindex', '-1'));
+      track.append(copy);
+    }
+    const loopWidth = () => (track.children[originals.length] as HTMLElement).offsetLeft - originals[0].offsetLeft;
+
+    let userPaused = reduce;
+    let hovered = false;
+    let focused = false;
+    let visible = false;
+    let pos = track.scrollLeft; // float position; browsers may round scrollLeft
+    let last = 0;
+    let raf = 0;
+
+    const wrap = () => {
+      const w = loopWidth();
+      if (w > 0 && pos >= w) pos -= w;
+      if (pos < 0) pos += w;
+    };
+
+    const frame = (t: number) => {
+      raf = 0;
+      if (!running()) return;
+      const dt = last ? Math.min(t - last, 64) : 0;
+      last = t;
+      // Someone else scrolled (swipe, wheel, buttons): pick up from there.
+      if (Math.abs(track.scrollLeft - pos) > 2) pos = track.scrollLeft;
+      pos += (speed * dt) / 1000;
+      wrap();
+      track.scrollLeft = pos;
+      raf = requestAnimationFrame(frame);
+    };
+
+    const running = () => !userPaused && !hovered && !focused && visible && !document.hidden;
+    const sync = () => {
+      root.classList.toggle('is-paused', userPaused);
+      pauseBtn.setAttribute('aria-label', (userPaused ? pauseBtn.dataset.labelPlay : pauseBtn.dataset.labelPause)!);
+      if (running() && !raf) {
+        last = 0;
+        pos = track.scrollLeft;
+        raf = requestAnimationFrame(frame);
+      }
+    };
+
+    const step = (dir: 1 | -1) => {
+      const first = originals[0];
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      if (dir === -1 && track.scrollLeft < first.offsetWidth) track.scrollLeft += loopWidth();
+      track.scrollBy({ left: dir * (first.offsetWidth + gap), behavior: reduce ? 'auto' : 'smooth' });
+    };
+
+    root.querySelector('.next')!.addEventListener('click', () => step(1));
+    root.querySelector('.prev')!.addEventListener('click', () => step(-1));
+    pauseBtn.addEventListener('click', () => {
+      userPaused = !userPaused;
+      sync();
+    });
+    // Only pause for a real mouse hovering a card (not touch, not the gaps).
+    track.addEventListener('pointerover', (e) => {
+      if (e.pointerType === 'mouse' && (e.target as HTMLElement).closest('li')) ((hovered = true), sync());
+    });
+    track.addEventListener('pointerleave', () => ((hovered = false), sync()));
+    // Keyboard focus inside the track pauses it so focused cards don't slide away.
+    track.addEventListener('focusin', (e) => {
+      focused = (e.target as HTMLElement).matches(':focus-visible');
+      sync();
+    });
+    track.addEventListener('focusout', () => ((focused = false), sync()));
+    track.addEventListener('scroll', () => {
+      if (!raf) {
+        pos = track.scrollLeft;
+        wrap();
+        if (Math.abs(track.scrollLeft - pos) > 2) track.scrollLeft = pos;
+      }
+    }, { passive: true });
+    document.addEventListener('visibilitychange', sync);
+    new IntersectionObserver(([entry]) => ((visible = entry.isIntersecting), sync()), { threshold: 0.2 }).observe(root);
+    sync();
+  }
+</script>
+
+<style>
+  .head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  .head h2 { margin-bottom: 0.15em; }
+  .head p { margin: 0; }
+  .controls { display: flex; gap: 6px; flex: none; }
+  .ctl {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--card);
+    color: var(--ink);
+    font: inherit;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+  .ctl:hover { background: var(--blush); border-color: var(--apricot); }
+  .pause { font-size: 0.7rem; letter-spacing: -1px; }
+  .i-play { display: none; font-size: 0.8rem; }
+  .is-paused .i-play { display: inline; }
+  .is-paused .i-pause { display: none; }
+
+  .track {
+    display: flex;
+    gap: 16px;
+    margin: 0;
+    padding: 4px 4px 18px;
+    list-style: none;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .track::-webkit-scrollbar { display: none; }
+  .track:focus-visible { outline-offset: 2px; }
+  .track > :global(li) { flex: 0 0 clamp(210px, 31%, 340px); }
+  @media (max-width: 640px) {
+    .track > :global(li) { flex-basis: 72%; }
+    .ctl.prev, .ctl.next { display: none; }
+  }
+</style>

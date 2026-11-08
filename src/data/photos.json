@@ -1155,52 +1155,158 @@
   },
   "loader": [
     {
+      "src": "/media/loader/d909d81ea610-240.webp",
+      "color": "#b8b470"
+    },
+    {
+      "src": "/media/loader/1db3ff2a179b-240.webp",
+      "color": "#b4a38f"
+    },
+    {
       "src": "/media/loader/d6b83a5aa2c4-240.webp",
       "color": "#bfaf9b"
     },
     {
-      "src": "/media/loader/d909d81ea610-240.webp",
-      "color": "#b8b470"
+      "src": "/media/loader/9b1c1f6d37c5-240.webp",
+      "color": "#b6a996"
     },
     {
       "src": "/media/loader/87da7c4136f9-240.webp",
       "color": "#a67f7d"
     },
     {
+      "src": "/media/loader/87dca9c0a272-240.webp",
+      "color": "#b4a89d"
+    },
+    {
       "src": "/media/loader/49fa8b119b21-240.webp",
       "color": "#aaa099"
+    },
+    {
+      "src": "/media/loader/9544c70e1795-240.webp",
+      "color": "#b2af72"
     },
     {
       "src": "/media/loader/50630f19191f-240.webp",
       "color": "#bab6ad"
     },
     {
+      "src": "/media/loader/9d89a9007d35-240.webp",
+      "color": "#a89c81"
+    },
+    {
       "src": "/media/loader/e379cbf37025-240.webp",
       "color": "#ab9c80"
+    },
+    {
+      "src": "/media/loader/a66bb9e06739-240.webp",
+      "color": "#c3a787"
     },
     {
       "src": "/media/loader/c89cce6c806c-240.webp",
       "color": "#aa9f93"
     },
     {
+      "src": "/media/loader/1b0c5094e570-240.webp",
+      "color": "#a27d8a"
+    },
+    {
       "src": "/media/loader/b8d3f634c4e5-240.webp",
       "color": "#8f81a9"
+    },
+    {
+      "src": "/media/loader/b9f6ebb19407-240.webp",
+      "color": "#a18ca1"
     },
     {
       "src": "/media/loader/74048971671b-240.webp",
       "color": "#c1af9e"
     },
     {
+      "src": "/media/loader/1d549d02b12b-240.webp",
+      "color": "#b7a897"
+    },
+    {
       "src": "/media/loader/b0db4fb13872-240.webp",
       "color": "#a89d8e"
+    },
+    {
+      "src": "/media/loader/0109b88b89cf-240.webp",
+      "color": "#d6bca1"
     },
     {
       "src": "/media/loader/a7cb6fb3f9ea-240.webp",
       "color": "#a69987"
     },
     {
+      "src": "/media/loader/d54575a95b8c-240.webp",
+      "color": "#aba698"
+    },
+    {
       "src": "/media/loader/d3e91cc1178c-240.webp",
       "color": "#b4a38e"
+    },
+    {
+      "src": "/media/loader/a33c24f17782-240.webp",
+      "color": "#c8b18b"
+    },
+    {
+      "src": "/media/loader/6e18f6fab4f2-240.webp",
+      "color": "#bfae93"
+    },
+    {
+      "src": "/media/loader/6c44406cdf8e-240.webp",
+      "color": "#a69f92"
+    }
+  ],
+  "videos": [
+    {
+      "event": "2026-04-30-french-francophone-society",
+      "label": "Piping tartelettes",
+      "src": "/media/videos/b61994f7f125-540.mp4",
+      "poster": "/media/videos/b61994f7f125-540.webp",
+      "w": 540,
+      "h": 960
+    },
+    {
+      "event": "2026-05-01-end-of-year-lava-cakes",
+      "label": "Lava cake batter",
+      "src": "/media/videos/744a1f823cdc-540.mp4",
+      "poster": "/media/videos/744a1f823cdc-540.webp",
+      "w": 540,
+      "h": 960
+    },
+    {
+      "event": "2026-10-29-sase",
+      "label": "Wrapping daifuku",
+      "src": "/media/videos/f5b889d3546d-540.mp4",
+      "poster": "/media/videos/f5b889d3546d-540.webp",
+      "w": 540,
+      "h": 960
+    },
+    {
+      "event": "2026-04-03-pfc",
+      "label": "Banana leaves for bibingka",
+      "src": "/media/videos/cdd3a998d1e3-540.mp4",
+      "poster": "/media/videos/cdd3a998d1e3-540.webp",
+      "w": 540,
+      "h": 960
+    },
+    {
+      "event": "2026-11-05-cla",
+      "label": "Black sesame, inside",
+      "src": "/media/videos/43015eaed96c-540.mp4",
+      "poster": "/media/videos/43015eaed96c-540.webp",
+      "w": 540,
+      "h": 960
+    },
+    {
+      "event": "2026-10-03-snap",
+      "label": "Rolling in coconut",
+      "src": "/media/videos/4e403b49976d-540.mp4",
+      "poster": "/media/videos/4e403b49976d-540.webp",
+      "w": 540,
+      "h": 960
     }
   ]
 }

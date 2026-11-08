@@ -2,7 +2,7 @@
 
 The website for **Baking Bad**, Princeton's all-inclusive student baking club. It replaces the old WordPress site at `bakingbad.odus.princeton.edu` (see `cc-plans/baking-bad-website-plan.md` for the why and the ODUS/domain plan).
 
-- **Pages:** Home (intro animation, countdown to the next bake, upcoming events, collabs, past bake nights), Team, Join.
+- **Pages:** Home (intro animation, countdown to the next bake, bake-night video loops, rotating Collabs and Bake nights carousels), Team, Join (how to join + basic info).
 - **Stack:** [Astro](https://astro.build) + TypeScript, built to static HTML and hosted on **Cloudflare Pages**. Event photos live in **Cloudflare R2** and are served at `/media/*` by a small Pages Function.
 - **Why static-first:** pages are pre-built and cached at Cloudflare's edge, so a traffic spike at signup time costs nothing. Anything live (countdown sync, signups, spots remaining) goes through small backend endpoints. See [Roadmap](#roadmap).
 
@@ -26,7 +26,7 @@ Event photos aren't in git. To see them locally you need the club's original pho
 ```
 src/
   pages/               index.astro (home), team.astro, join.astro, 404.astro
-  components/          Intro, Countdown, UpcomingCard, EventPhotoCard, PhotoViewer, Photo, Mascot, Header, Footer
+  components/          Intro, Countdown, VideoReel, Carousel, EventPhotoCard, PhotoViewer, Photo, Mascot, ExternalLink, Header, Footer
   content/events/      one .yaml file per event   ← officers edit these
   data/officers.ts     officer rosters            ← officers edit this
   data/site.ts         email, GroupMe, Instagram, kitchens, ODUS statement
@@ -54,7 +54,8 @@ time: "19:00"            # 24h, Princeton time. Leave out while TBA.
 endTime: "21:00"         # optional (defaults to 2 hours)
 location: NCW Community Kitchen   # leave out while TBA
 kind: bake-night          # bake-night | collab | special
-partner: Vietnamese Student Association   # collabs only
+partner: Vietnamese Student Association   # collabs only, full name
+partnerShort: VSA                          # collabs: shown as "BB × VSA"
 bake: Pandan honeycomb cake (bánh bò nướng)  # what we made (optional)
 ```
 
@@ -65,7 +66,8 @@ Commit and push. Cloudflare rebuilds in about a minute. The countdown picks the 
 1. Put the event's originals in `media/bake_nights/<folder>/` (same folders as the shared Drive).
 2. Pick photos: `node scripts/contact-sheets.mjs` makes numbered contact sheets in `/tmp/bakingbad-sheets/` (with an `index.txt` mapping numbers to filenames).
 3. Add the event to `scripts/photo-picks.json`: the folder name and the chosen filenames, **first one = cover**. To add a frame to the intro animation, add it to `loader` too.
-4. `npm run photos:build` converts them to web sizes (AVIF + WebP, 480/960/1600 px) in `public/media/` and updates `src/data/photos.json`.
+   For a video loop on the home page, add `{ "event", "file": "IMG_1234.MOV", "start": 1.5, "duration": 6, "label": "Piping tartelettes" }` to `videos` (keep it to 5–7 seconds; it's cropped to vertical 9:16 and muted).
+4. `npm run photos:build` converts them to web sizes (AVIF + WebP at 480/960/1600 px; videos as 540×960 MP4 + poster) in `public/media/` and updates `src/data/photos.json`. Needs ffmpeg for videos (`brew install ffmpeg`).
 5. `npm run photos:upload` pushes the new files to R2 (needs `.env`, see below).
 6. Commit `photo-picks.json` and `photos.json`, then push.
 
@@ -92,7 +94,7 @@ Edit `src/data/officers.ts`. Add the new term at the **top** of `terms`; the pre
 4. The site goes live at `https://bakingbad.pages.dev` (or whatever name is free). Update `site` in `astro.config.mjs` to match.
 5. Once ODUS approves, add `bakingbad.odus.princeton.edu` under the project's *Custom domains* **before** OIT adds the DNS record.
 
-**Storage math:** each published photo is about 0.6 MB across all its sizes, so roughly 100 MB per year at 6–8 photos per event. R2's free tier is 10 GB with free bandwidth; beyond that it's $0.015/GB-month.
+**Storage math:** each published photo is about 0.6 MB across all its sizes and each video loop about 0.5 MB, so roughly 100 MB per year at 6–8 photos per event. R2's free tier is 10 GB with free bandwidth; beyond that it's $0.015/GB-month.
 
 To test the production setup locally: `npm run build && npx wrangler pages dev dist` (uses a local, empty R2; seed it with `npx wrangler r2 object put bakingbad-media/<key> --file <file> --local`).
 
@@ -104,10 +106,12 @@ To test the production setup locally: `npm run build && npx wrangler pages dev d
 - **Fonts:** Pacifico (script, only for the wordmark and accents) and Nunito, both self-hosted.
 - **Motifs:** the logo's scalloped edge (`public/scallop.svg`, used as a CSS mask) and the seasonal tiger (santa in December, valentine in February).
 - **Intro:** plays once per browser session, skippable with any key or tap, and never plays with reduced motion or with JavaScript off.
+- **Motion:** carousels and video loops have visible pause buttons, pause when off screen, and start paused for reduced-motion users.
+- **Links** to other sites open in a new tab (`ExternalLink.astro`).
 
 ## Requirements this site must keep meeting
 
-- The **ODUS open-membership statement** appears in the footer of every page and on Join.
+- The **ODUS open-membership statement** appears in the footer of every page.
 - **Accessibility:** keyboard-navigable, skip link, labeled controls. The countdown's ticking digits are hidden from screen readers and the event and date are given as plain text instead. Checked with axe (0 issues).
 - **No ads.** Donation buttons need approval from the Office of the General Counsel.
 - "Not an official University publication" disclaimer in the footer.
@@ -132,6 +136,5 @@ To test the production setup locally: `npm run build && npx wrangler pages dev d
 
 - Times and kitchens for Mini Bundt Cakes (Nov 18) and the Senior Event (Dec 3).
 - Contact email: currently the founding president's address from the old site.
-- Confirm the GroupMe link, and the full names of TASA, CLA, PFC, SNAP, SASE for the collab cards.
+- Confirm the GroupMe link.
 - Confirm the "To All the Boys I've Loved Before" title (folder said TATBILB).
-- Confirm the weekly cadence in "How it works" (monthly theme, week-3 general meeting).

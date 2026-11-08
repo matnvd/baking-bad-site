@@ -1,19 +1,20 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import ExternalLink from '../components/ExternalLink.astro';
 import paws from '../assets/brand/tiger-paws.png';
 import { site } from '../data/site';
 ---
 
-<Base title="Join" description="How to join Baking Bad: GroupMe, Instagram, where we meet, and who to contact.">
+<Base title="Join" description="How to join Baking Bad, Princeton's all-inclusive student baking club: where we bake, how it works, and who to contact.">
   <section class="section top">
     <div class="wrap head">
       <div>
         <p class="pill">Everyone's welcome</p>
-        <h1>Come bake with us</h1>
+        <h1>Join Baking Bad</h1>
         <p class="lede">
-          Baking Bad is Princeton's all-inclusive student baking club. Learn the art and science of baking, meet people
-          who love it too, and take home free baked goods. Come bake and destress with us. Bring your friends too!
+          Learn the art and science of baking, meet people who love it too, and take home free baked goods. Come bake and
+          destress with us. Bring your friends!
         </p>
       </div>
       <Image src={paws} alt="" width={260} class="head-tiger" />
@@ -21,58 +22,76 @@ import { site } from '../data/site';
   </section>
 
   <section class="wrap" aria-labelledby="steps">
-    <h2 id="steps" class="sr-only">How to join</h2>
+    <h2 id="steps">Joining, in four steps</h2>
     <ol class="steps">
-      <li class="card">
+      <li>
         <span class="num" aria-hidden="true">1</span>
-        <h3>Join the GroupMe</h3>
-        <p>Bake night announcements, reminders, and last-minute updates.</p>
-        <a class="btn btn-primary" href={site.groupme} rel="noopener">Open GroupMe</a>
+        <div>
+          <h3>Say hi</h3>
+          <p>
+            Join the <ExternalLink href={site.groupme}>GroupMe</ExternalLink> and follow{' '}
+            <ExternalLink href={site.instagram.url}>{site.instagram.handle}</ExternalLink> for bake announcements.
+          </p>
+        </div>
       </li>
-      <li class="card">
+      <li>
         <span class="num" aria-hidden="true">2</span>
-        <h3>Follow us on Instagram</h3>
-        <p>Recaps, recipes, and the first word on new events and collabs.</p>
-        <a class="btn btn-ghost" href={site.instagram.url} rel="noopener">{site.instagram.handle}</a>
+        <div>
+          <h3>Pick a bake</h3>
+          <p>The <a href="/">countdown on the home page</a> always shows what's next.</p>
+        </div>
       </li>
-      <li class="card">
+      <li>
         <span class="num" aria-hidden="true">3</span>
-        <h3>Show up and bake</h3>
-        <p>Come to any bake night. Follow the recipe, follow an officer, or freestyle. No experience needed.</p>
-        <a class="btn btn-ghost" href="/#coming-up">See what's next</a>
+        <div>
+          <h3>Sign up</h3>
+          <p>With a friend, if you like! No experience needed.</p>
+        </div>
+      </li>
+      <li>
+        <span class="num" aria-hidden="true">4</span>
+        <div>
+          <h3>Claim a workspace</h3>
+          <p>Grab a spot and do it all: whisk, roll, decorate, and taste-test.</p>
+        </div>
       </li>
     </ol>
   </section>
 
-  <section class="section" aria-labelledby="details">
-    <div class="wrap details">
-      <h2 id="details" class="sr-only">Details</h2>
-      <div class="card info">
-        <h3>Where we bake</h3>
-        <ul>{site.kitchens.map((k) => <li>{k}</li>)}</ul>
-        <p class="muted">The exact kitchen for each bake is listed with the event.</p>
-      </div>
-      <div class="card info">
-        <h3>Dietary needs</h3>
-        <p>We do our best every week to make each bake work for gluten-free, vegan, and nut-free members. Let an officer know what you need.</p>
-      </div>
-      <div class="card info">
-        <h3>Questions?</h3>
-        <p>Email <a href={`mailto:${site.email}`}>{site.email}</a> or DM <a href={site.instagram.url}>{site.instagram.handle}</a>.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="wrap" aria-labelledby="open">
-    <div class="statement">
-      <h2 id="open">Open membership</h2>
-      <p>{site.odusStatement}</p>
+  <section class="section" aria-labelledby="know">
+    <div class="wrap">
+      <h2 id="know">Good to know</h2>
+      <dl class="facts">
+        <div class="card">
+          <dt>How it works</dt>
+          <dd>We bake 2–3 times a month, each month around a dessert theme.</dd>
+        </div>
+        <div class="card">
+          <dt>Where</dt>
+          <dd>{site.kitchens.join(' or ')}. Each event lists its kitchen.</dd>
+        </div>
+        <div class="card">
+          <dt>Dietary needs</dt>
+          <dd>We try to cover gluten-free, vegan, and nut-free. Just let us know.</dd>
+        </div>
+        <div class="card">
+          <dt>Bake your way</dt>
+          <dd>Follow the recipe, follow an officer, or freestyle. Be your own baker.</dd>
+        </div>
+        <div class="card">
+          <dt>Questions?</dt>
+          <dd>
+            Email <a href={`mailto:${site.email}`}>{site.email}</a> or DM{' '}
+            <ExternalLink href={site.instagram.url}>{site.instagram.handle}</ExternalLink>.
+          </dd>
+        </div>
+      </dl>
     </div>
   </section>
 </Base>
 
 <style>
-  .top { padding-bottom: 32px; }
+  .top { padding-bottom: 24px; }
   .head {
     display: flex;
     align-items: center;
@@ -80,30 +99,37 @@ import { site } from '../data/site';
     gap: 24px;
   }
   .head h1 { margin-top: 14px; }
-  .lede { max-width: 60ch; margin: 0; font-size: 1.1rem; color: var(--ink-soft); }
-  :global(.head-tiger) { width: clamp(120px, 20vw, 180px); height: auto; flex: none; }
+  .lede { max-width: 58ch; margin: 0; font-size: 1.1rem; color: var(--ink-soft); }
+  :global(.head-tiger) { width: clamp(110px, 18vw, 160px); height: auto; flex: none; }
+
+  h2 { font-size: clamp(1.4rem, 3vw, 1.8rem); }
 
   .steps {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
-    gap: 18px;
-    margin: 0;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin: 18px 0 0;
     padding: 0;
     list-style: none;
+    counter-reset: step;
   }
   .steps li {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 24px;
+    gap: 14px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--card);
+    box-shadow: var(--shadow);
   }
-  .steps h3 { margin-top: 12px; }
-  .steps p { flex: 1; color: var(--ink-soft); }
+  .steps h3 { margin: 4px 0 2px; font-size: 1.05rem; }
+  .steps p { margin: 0; font-size: 0.95rem; color: var(--ink-soft); }
   .num {
+    flex: none;
     display: grid;
     place-items: center;
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     background: var(--apricot);
     font-weight: 900;
     -webkit-mask: url('/scallop.svg') center / 100% 100% no-repeat;
@@ -111,25 +137,23 @@ import { site } from '../data/site';
   }
   .steps li:nth-child(2) .num { background: var(--coral); }
   .steps li:nth-child(3) .num { background: var(--blush); }
+  .steps li:nth-child(4) .num { background: #fde3c8; }
 
-  .details {
+  .facts {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: 14px;
+    margin: 18px 0 0;
   }
-  .info { padding: 24px; }
-  .info ul { margin: 0 0 0.6em; padding-left: 1.1em; font-weight: 700; }
-  .info p:last-child { margin: 0; }
+  .facts .card { padding: 18px 20px; }
+  dt { font-weight: 900; margin-bottom: 4px; }
+  dd { margin: 0; font-size: 0.95rem; color: var(--ink-soft); }
 
-  .statement {
-    padding: 28px;
-    border: 2px dashed var(--apricot);
-    border-radius: var(--radius);
+  @media (max-width: 960px) {
+    .steps { grid-template-columns: repeat(2, 1fr); }
   }
-  .statement h2 { font-size: 1.3rem; }
-  .statement p { margin: 0; max-width: 75ch; }
-
   @media (max-width: 560px) {
     .head { flex-direction: column-reverse; align-items: flex-start; }
+    .steps { grid-template-columns: 1fr; }
   }
 </style>

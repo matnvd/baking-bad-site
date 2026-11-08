@@ -7,31 +7,19 @@ import { monthYear } from '../lib/events';
 
 interface Props {
   event: EventView;
-  /** collab cards lead with the partner name */
-  variant?: 'collab' | 'night';
 }
-const { event: e, variant = 'night' } = Astro.props;
+const { event: e } = Astro.props;
 const photos = photosFor(e.id);
 const cover = photos[0];
-const heading = variant === 'collab' ? (e.partner ?? e.title) : e.title;
+const fullName = e.kind === 'collab' && e.partnerShort ? e.partner : undefined;
 ---
 
-<li class:list={['tile', variant]}>
-  <button
-    type="button"
-    class="open"
-    data-gallery={e.id}
-    disabled={!photos.length}
-  >
-    {
-      cover ? (
-        <Photo photo={cover} alt="" class="cover" />
-      ) : (
-        <span class="cover empty" />
-      )
-    }
+<li class="tile">
+  <button type="button" class="open" data-gallery={e.id} disabled={!photos.length}>
+    {cover ? <Photo photo={cover} alt="" class="cover" sizes="(min-width: 1100px) 340px, (min-width: 640px) 31vw, 72vw" /> : <span class="cover empty" />}
     <span class="text">
-      <span class="h">{heading}</span>
+      <span class="h">{e.displayTitle}</span>
+      {fullName && <span class="org">{fullName}</span>}
       <span class="sub">
         <time datetime={e.date}>{monthYear(e)}</time>
         {e.bake && <> · {e.bake}</>}
@@ -44,6 +32,7 @@ const heading = variant === 'collab' ? (e.partner ?? e.title) : e.title;
 <style>
   .tile { list-style: none; }
   .open {
+    position: relative; /* contains the visually-hidden label */
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -65,13 +54,12 @@ const heading = variant === 'collab' ? (e.partner ?? e.title) : e.title;
   .open:disabled:hover { transform: none; }
 
   :global(.cover) { aspect-ratio: 4 / 3; width: 100%; }
-  .night :global(.cover) { aspect-ratio: 1; }
   .cover.empty { display: block; background: var(--blush); }
   .open:hover :global(.cover img) { transform: scale(1.04); }
   :global(.cover img) { transition: transform 0.5s var(--ease-out); }
 
-  .text { display: block; padding: 14px 16px 16px; }
-  .h { display: block; font-weight: 800; font-size: 1.08rem; line-height: 1.25; }
-  .sub { display: block; margin-top: 2px; font-size: 0.9rem; color: var(--ink-soft); }
-  .night .h { font-size: 1rem; }
+  .text { display: block; padding: 12px 16px 16px; }
+  .h { display: block; font-weight: 900; font-size: 1.08rem; line-height: 1.25; }
+  .org { display: block; font-size: 0.85rem; font-weight: 700; color: var(--coral-text); }
+  .sub { display: block; margin-top: 2px; font-size: 0.88rem; color: var(--ink-soft); }
 </style>

@@ -18,7 +18,6 @@ const letters = (word: string) => [...word];
     <span class="frame"><img src={frames[0]} alt="" width="240" height="240" loading="lazy" /></span>
     <span class="word bottom">{letters('Bad').map((ch, i) => <span class="ch" style={`--i:${i + 3}`}><span>{ch}</span></span>)}</span>
   </div>
-  <p class="skip">Tap or press any key to skip</p>
 </div>
 
 <script>
@@ -28,7 +27,9 @@ const letters = (word: string) => [...word];
   if (intro && root.classList.contains('intro-on')) {
     const frames: string[] = JSON.parse(intro.dataset.frames || '[]');
     const img = intro.querySelector<HTMLImageElement>('.frame img')!;
-    const FRAME_MS = 95;
+    const FRAME_MS = 65; // time on each photo
+    const START_MS = 180; // photos start flicking as the frame pops in
+    const HOLD_LOGO_MS = 450; // linger on the logo before the curtain lifts
     let finished = false;
     const timers: number[] = [];
     const later = (fn: () => void, ms: number) => timers.push(window.setTimeout(fn, ms));
@@ -67,9 +68,8 @@ const letters = (word: string) => [...word];
     Promise.race([Promise.all([preload, fonts]), timeout]).then(() => {
       if (finished) return;
       intro.classList.add('play');
-      // Photos start flicking once the frame has popped in (~450ms).
-      frames.forEach((src, i) => later(() => (img.src = src), 450 + i * FRAME_MS));
-      later(leave, 450 + frames.length * FRAME_MS + 420);
+      frames.forEach((src, i) => later(() => (img.src = src), START_MS + i * FRAME_MS));
+      later(leave, START_MS + (frames.length - 1) * FRAME_MS + HOLD_LOGO_MS);
     });
 
     const skip = () => leave();
@@ -110,12 +110,12 @@ const letters = (word: string) => [...word];
     /* clip only along the bottom edge so letters rise out of it; Pacifico's
        swashes stay visible on the sides and top */
     clip-path: inset(-1em -0.6em 0 -0.6em);
-    padding-bottom: 0.36em;
-    margin-bottom: -0.36em;
+    padding-bottom: 0.62em; /* deep enough for Pacifico's g descender */
+    margin-bottom: -0.62em;
   }
   .ch > span {
     display: inline-block;
-    transform: translateY(110%);
+    transform: translateY(175%); /* fully below the mask before rising */
   }
   .play .ch > span {
     transform: none;
@@ -134,22 +134,8 @@ const letters = (word: string) => [...word];
   .frame img { width: 100%; height: 100%; object-fit: cover; }
   .play .frame {
     transform: scale(1);
-    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s;
+    transition: transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) 0.12s;
   }
-
-  .skip {
-    position: absolute;
-    bottom: 24px;
-    left: 0;
-    right: 0;
-    margin: 0;
-    text-align: center;
-    font-size: 0.8rem;
-    color: var(--ink-soft);
-    opacity: 0;
-    transition: opacity 0.4s 0.8s;
-  }
-  .play .skip { opacity: 1; }
 
   @media (max-width: 560px) {
     .mark { flex-direction: column; gap: 6px; font-size: clamp(3.6rem, 19vw, 5rem); }

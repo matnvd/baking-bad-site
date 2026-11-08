@@ -181,20 +181,36 @@
   },
   "loader": [
     {
+      "event": "2026-04-02-vsa",
+      "photo": "IMG_3278.HEIC"
+    },
+    {
+      "event": "2025-12-06-christmas",
+      "photo": "IMG_1416.HEIC"
+    },
+    {
       "event": "2025-12-06-christmas",
       "photo": "IMG_0153.HEIC"
     },
     {
-      "event": "2026-04-02-vsa",
-      "photo": "IMG_3278.HEIC"
+      "event": "2026-02-26-when-harry-met-sally",
+      "photo": "IMG_2501.HEIC"
     },
     {
       "event": "2026-04-30-french-francophone-society",
       "photo": "IMG_1146.HEIC"
     },
     {
+      "event": "2026-03-19-tasa",
+      "photo": "IMG_3039.HEIC"
+    },
+    {
       "event": "2026-02-26-when-harry-met-sally",
       "photo": "IMG_2479.HEIC"
+    },
+    {
+      "event": "2026-04-02-vsa",
+      "photo": "IMG_3279.HEIC"
     },
     {
       "event": "2026-10-29-sase",
@@ -202,31 +218,115 @@
     },
     {
       "event": "2026-04-03-pfc",
+      "photo": "IMG_3355.HEIC"
+    },
+    {
+      "event": "2026-04-03-pfc",
       "photo": "IMG_0859.HEIC"
+    },
+    {
+      "event": "2026-04-11-polish-society",
+      "photo": "IMG_3478.HEIC"
     },
     {
       "event": "2026-04-11-polish-society",
       "photo": "IMG_3467.HEIC"
     },
     {
+      "event": "2026-04-30-french-francophone-society",
+      "photo": "IMG_3922.HEIC"
+    },
+    {
       "event": "2026-05-01-end-of-year-lava-cakes",
       "photo": "IMG_4025.HEIC"
+    },
+    {
+      "event": "2026-05-01-end-of-year-lava-cakes",
+      "photo": "IMG_4004.HEIC"
     },
     {
       "event": "2026-11-05-cla",
       "photo": "IMG_3491.HEIC"
     },
     {
+      "event": "2026-10-03-snap",
+      "photo": "IMG_8990.HEIC"
+    },
+    {
       "event": "2026-03-19-tasa",
       "photo": "IMG_3043.HEIC"
+    },
+    {
+      "event": "2026-11-05-cla",
+      "photo": "IMG_3495.HEIC"
     },
     {
       "event": "2025-12-04-alice-in-wonderland",
       "photo": "IMG_1338.HEIC"
     },
     {
+      "event": "2025-12-04-alice-in-wonderland",
+      "photo": "IMG_1368.HEIC"
+    },
+    {
       "event": "2026-09-16-pumpkin-muffins",
       "photo": "IMG_8786.HEIC"
+    },
+    {
+      "event": "2026-03-26-cla",
+      "photo": "IMG_0704.HEIC"
+    },
+    {
+      "event": "2026-10-03-snap",
+      "photo": "IMG_8959.HEIC"
+    },
+    {
+      "event": "2026-02-12-to-all-the-boys",
+      "photo": "IMG_8693.HEIC"
+    }
+  ],
+  "videos": [
+    {
+      "event": "2026-04-30-french-francophone-society",
+      "file": "IMG_3920.MOV",
+      "start": 1.0,
+      "duration": 6,
+      "label": "Piping tartelettes"
+    },
+    {
+      "event": "2026-05-01-end-of-year-lava-cakes",
+      "file": "IMG_3991.MOV",
+      "start": 0.3,
+      "duration": 6,
+      "label": "Lava cake batter"
+    },
+    {
+      "event": "2026-10-29-sase",
+      "file": "IMG_9254.MOV",
+      "start": 0.3,
+      "duration": 6,
+      "label": "Wrapping daifuku"
+    },
+    {
+      "event": "2026-04-03-pfc",
+      "file": "IMG_3343.MOV",
+      "start": 0.0,
+      "duration": 5,
+      "label": "Banana leaves for bibingka"
+    },
+    {
+      "event": "2026-11-05-cla",
+      "file": "IMG_9394.MOV",
+      "start": 6.5,
+      "duration": 7,
+      "label": "Black sesame, inside"
+    },
+    {
+      "event": "2026-10-03-snap",
+      "file": "IMG_8964.MOV",
+      "start": 2.0,
+      "duration": 6,
+      "label": "Rolling in coconut"
     }
   ]
 }

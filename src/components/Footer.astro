@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import logo from '../assets/brand/logo.png';
 import { nav, site } from '../data/site';
 import Mascot from './Mascot.astro';
+import ExternalLink from './ExternalLink.astro';
 ---
 
 <footer class="site-footer">
@@ -18,7 +19,7 @@ import Mascot from './Mascot.astro';
     <nav aria-label="Footer">
       <ul>
         {nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
-        <li><a href={site.instagram.url} rel="noopener">Instagram</a></li>
+        <li><ExternalLink href={site.instagram.url}>Instagram</ExternalLink></li>
         <li><a href={`mailto:${site.email}`}>Email us</a></li>
       </ul>
     </nav>
@@ -69,7 +70,7 @@ import Mascot from './Mascot.astro';
     font-size: 0.85rem;
     color: var(--ink-soft);
   }
-  .fine p { margin: 0 0 0.5em; max-width: 90ch; }
+  .fine p { margin: 0 0 0.5em; }
   @media (max-width: 720px) {
     .grid { grid-template-columns: 1fr auto; }
     nav { grid-column: 1 / -1; grid-row: 2; }

@@ -10,7 +10,7 @@ interface Props {
 }
 const galleries = Object.fromEntries(
   Astro.props.events
-    .map((e) => [e.id, { title: e.title, photos: photosFor(e.id).map(galleryItem) }] as const)
+    .map((e) => [e.id, { title: e.displayTitle, photos: photosFor(e.id).map(galleryItem) }] as const)
     .filter(([, g]) => g.photos.length),
 );
 ---

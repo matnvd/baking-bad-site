@@ -6,14 +6,16 @@
 // Phase 2: replace Date.now() with server time from the signup Worker.
 import type { EventView } from '../lib/events';
 import { site } from '../data/site';
+import ExternalLink from './ExternalLink.astro';
 
 interface Props {
   events: EventView[]; // upcoming, soonest first
 }
 const { events } = Astro.props;
 const next = events[0];
+const then = events[1];
 const payload = events.map((e) => ({
-  title: e.title,
+  title: e.displayTitle,
   start: e.startISO,
   end: e.endISO,
   timeKnown: e.timeKnown,
@@ -25,7 +27,7 @@ const payload = events.map((e) => ({
 <section class="countdown card" aria-labelledby="cd-heading" data-events={JSON.stringify(payload)}>
   <div class="cd-live" hidden={!next}>
     <p class="pill">Next bake</p>
-    <h2 id="cd-heading" class="cd-title">{next?.title}</h2>
+    <h2 id="cd-heading" class="cd-title">{next?.displayTitle}</h2>
     <p class="cd-meta">
       {next && <time datetime={next.timeKnown ? next.startISO : next.date}>{next.dateLabel}</time>}
       <span class="cd-rest">{next && ` · ${next.timeLabel} · ${next.location ?? 'Location TBA'}`}</span>
@@ -38,13 +40,14 @@ const payload = events.map((e) => ({
       <div class="tile timed" data-unit="seconds"><span class="num">–</span><span class="unit">sec</span></div>
       <p class="cd-now">Happening now!</p>
     </div>
+    <p class="cd-then" hidden={!then}>Then: <strong>{then?.displayTitle}</strong> · <span>{then?.dateLabel}</span></p>
   </div>
 
   <div class="cd-empty" hidden={Boolean(next)}>
     <p class="pill soft">Next bake</p>
     <h2 class="cd-title">Nothing on the calendar yet</h2>
     <p class="cd-meta">
-      New bake nights get announced on Instagram first. Follow <a href={site.instagram.url}>{site.instagram.handle}</a>.
+      New bake nights get announced on Instagram first. Follow <ExternalLink href={site.instagram.url}>{site.instagram.handle}</ExternalLink>.
     </p>
   </div>
 </section>
@@ -60,6 +63,7 @@ const payload = events.map((e) => ({
     const title = live.querySelector<HTMLElement>('.cd-title')!;
     const time = live.querySelector<HTMLTimeElement>('time');
     const rest = live.querySelector<HTMLElement>('.cd-rest')!;
+    const then = live.querySelector<HTMLElement>('.cd-then')!;
     const num = (unit: string) => clock.querySelector<HTMLElement>(`[data-unit="${unit}"] .num`)!;
     const unitLabel = clock.querySelector<HTMLElement>('[data-unit="days"] .unit')!;
     let shown: Ev | null = null;
@@ -77,6 +81,12 @@ const payload = events.map((e) => ({
       }
       rest.textContent = ' · ' + others.join(' · ');
       clock.classList.toggle('tba', !ev.timeKnown);
+      const after = events[events.indexOf(ev) + 1];
+      then.hidden = !after;
+      if (after) {
+        then.querySelector('strong')!.textContent = after.title;
+        then.querySelector('span')!.textContent = after.meta.split(' · ')[0];
+      }
     };
 
     const tick = () => {
@@ -159,6 +169,8 @@ const payload = events.map((e) => ({
   .tba .timed { display: none; }
   .tba .tile { width: clamp(124px, 30vw, 150px); }
   .tba .num { font-size: clamp(2.1rem, 6vw, 2.8rem); }
+  .cd-then { margin: 18px 0 0; font-size: 0.92rem; color: var(--ink-soft); }
+  .cd-then[hidden] { display: none; }
   .cd-now { display: none; margin: 0; font-weight: 800; font-size: 1.3rem; }
   .now .tile { display: none; }
   .now .cd-now { display: block; }

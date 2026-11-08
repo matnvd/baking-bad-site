@@ -15,7 +15,7 @@ if (!R2_ACCOUNT_ID || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY) {
 }
 
 const ROOT = 'public/media';
-const TYPES = { avif: 'image/avif', webp: 'image/webp', jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png' };
+const TYPES = { avif: 'image/avif', webp: 'image/webp', jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', mp4: 'video/mp4' };
 
 const s3 = new S3Client({
   region: 'auto',
@@ -31,7 +31,7 @@ function walk(dir) {
 }
 
 const local = walk(ROOT)
-  .filter((p) => /\.(avif|webp|jpe?g|png)$/i.test(p))
+  .filter((p) => /\.(avif|webp|jpe?g|png|mp4)$/i.test(p))
   .map((p) => ({ path: p, key: relative(ROOT, p).split(sep).join('/') }));
 
 const existing = new Set();

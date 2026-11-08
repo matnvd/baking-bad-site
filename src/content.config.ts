@@ -19,7 +19,8 @@ const events = defineCollection({
     endTime: z.string().regex(/^\d{2}:\d{2}$/).optional(),
     location: z.string().optional(), // omit while TBA
     kind: z.enum(['bake-night', 'collab', 'special']),
-    partner: z.string().optional(), // collab partner org
+    partner: z.string().optional(), // collab partner org, full name
+    partnerShort: z.string().optional(), // e.g. "CLA" → shown as "BB × CLA"
     bake: z.string().optional(), // what we made
     blurb: z.string().optional(),
     // Phase 2 (signup drops). Not used by the site yet.

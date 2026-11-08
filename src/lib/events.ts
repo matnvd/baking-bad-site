@@ -10,6 +10,9 @@ export interface EventView {
   title: string;
   kind: EventEntry['data']['kind'];
   partner?: string;
+  partnerShort?: string;
+  /** "BB × CLA" for collabs, otherwise the event title */
+  displayTitle: string;
   bake?: string;
   blurb?: string;
   location?: string;
@@ -65,6 +68,8 @@ export function toView(entry: EventEntry): EventView {
     title: d.title,
     kind: d.kind,
     partner: d.partner,
+    partnerShort: d.partnerShort,
+    displayTitle: d.kind === 'collab' && d.partner ? `BB × ${d.partnerShort ?? d.partner}` : d.title,
     bake: d.bake,
     blurb: d.blurb,
     location: d.location,

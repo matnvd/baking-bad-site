@@ -5,6 +5,7 @@
 //
 // Output (gitignored):  public/media/<event>/<hash>-<width>.{avif,webp}
 //                       public/media/loader/<hash>-240.webp
+//                       public/media/videos/<hash>-540.{mp4,webp}   (needs ffmpeg)
 // Output (committed):   src/data/photos.json
 // Filenames include a hash of the original file, so they never change and can
 // be cached forever. Then run `npm run photos:upload` to push them to R2.
@@ -106,5 +107,46 @@ for (const { event, photo } of picks.loader) {
   loader.push({ src: `/media/loader/${hash}-${LOADER_SIZE}.webp`, color: p.color });
 }
 
-writeFileSync(MANIFEST, JSON.stringify({ events, loader }, null, 2) + '\n');
-console.log(`Wrote ${MANIFEST}: ${done.length} photos across ${Object.keys(events).length} events, ${loader.length} loader frames.`);
+// Video loops: short, muted, vertical 9:16 clips (H.264 MP4 + a poster).
+// Needs ffmpeg. The hash covers the source file and the chosen segment.
+const VIDEO_W = 540;
+const VIDEO_H = 960;
+mkdirSync(join(OUT, 'videos'), { recursive: true });
+const videos = [];
+for (const v of picks.videos ?? []) {
+  const { source } = picks.events[v.event] ?? {};
+  if (!source) throw new Error(`Video event ${v.event} must also be listed under events`);
+  const src = join(MEDIA, source, v.file);
+  if (!existsSync(src)) throw new Error(`Missing ${src} (listed in photo-picks.json → videos)`);
+  const hash = createHash('sha1').update(readFileSync(src)).update(`${v.start}:${v.duration}`).digest('hex').slice(0, 12);
+  const base = join(OUT, 'videos', `${hash}-${VIDEO_W}`);
+  const crop = `scale=${VIDEO_W}:${VIDEO_H}:force_original_aspect_ratio=increase,crop=${VIDEO_W}:${VIDEO_H}`;
+  if (!existsSync(`${base}.mp4`)) {
+    await run('ffmpeg', [
+      '-v', 'error', '-y', '-ss', String(v.start), '-t', String(v.duration), '-i', src,
+      '-vf', `${crop},fps=30`, '-an',
+      '-c:v', 'libx264', '-preset', 'slow', '-crf', '27', '-profile:v', 'high', '-pix_fmt', 'yuv420p',
+      '-movflags', '+faststart', `${base}.mp4`,
+    ]);
+  }
+  if (!existsSync(`${base}.webp`)) {
+    const jpg = join(CACHE, `${hash}-poster.jpg`);
+    await run('ffmpeg', ['-v', 'error', '-y', '-ss', String(v.start + 0.2), '-i', src, '-frames:v', '1', '-vf', crop, jpg]);
+    await sharp(jpg).webp({ quality: 72 }).toFile(`${base}.webp`);
+  }
+  videos.push({
+    event: v.event,
+    label: v.label,
+    src: `/media/videos/${hash}-${VIDEO_W}.mp4`,
+    poster: `/media/videos/${hash}-${VIDEO_W}.webp`,
+    w: VIDEO_W,
+    h: VIDEO_H,
+  });
+  process.stdout.write('v');
+}
+if (videos.length) process.stdout.write('\n');
+
+writeFileSync(MANIFEST, JSON.stringify({ events, loader, videos }, null, 2) + '\n');
+console.log(
+  `Wrote ${MANIFEST}: ${done.length} photos across ${Object.keys(events).length} events, ${loader.length} loader frames, ${videos.length} videos.`,
+);
