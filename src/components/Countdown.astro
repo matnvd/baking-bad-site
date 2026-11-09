@@ -29,7 +29,7 @@ const payload = events.map((e) => ({
 
 <section class="countdown card" aria-labelledby="cd-heading" data-events={JSON.stringify(payload)}>
   <div class="cd-live" hidden={!next}>
-    <p class="pill next-pill">Next bake</p>
+    <p class="pill next-pill">Next bake<svg class="next-ring" aria-hidden="true"><rect /></svg></p>
     <h2 id="cd-heading" class="cd-title">{next?.displayTitle}</h2>
     <p class="cd-meta">
       {next && <time datetime={next.timeKnown ? next.startISO : next.date}>{next.dateLabel}</time>}
@@ -81,6 +81,40 @@ const payload = events.map((e) => ({
     const num = (unit: string) => clock.querySelector<HTMLElement>(`[data-unit="${unit}"] .num`)!;
     const unitLabel = clock.querySelector<HTMLElement>('[data-unit="days"] .unit')!;
     const signup = live.querySelector<HTMLButtonElement>('.signup-btn')!;
+
+    // Size the dashed ring around "Next bake" to the label (a pill shape:
+    // corner radius = half its height). CSS animates the dashes around it.
+    const DASH_PERIOD = 24; // target dash + gap length in px
+    const DASH_SHARE = 0.62; // dash ≈ 15px, gap ≈ 9px
+    const ring = live.querySelector<SVGSVGElement>('.next-ring');
+    const ringRect = ring?.querySelector('rect');
+    const fitRing = () => {
+      if (!ring || !ringRect) return;
+      const { width, height } = ring.getBoundingClientRect();
+      const sw = 2.5;
+      const w = Math.max(width - sw, 0);
+      const h = Math.max(height - sw, 0);
+      ringRect.setAttribute('x', String(sw / 2));
+      ringRect.setAttribute('y', String(sw / 2));
+      ringRect.setAttribute('width', String(w));
+      ringRect.setAttribute('height', String(h));
+      ringRect.setAttribute('rx', String(h / 2));
+      ringRect.setAttribute('ry', String(h / 2));
+      // Fit a whole number of dash+gap repeats around the ring (stretching
+      // them slightly), so there's no odd partial dash where the outline
+      // starts and the movement loops seamlessly.
+      const length = ringRect.getTotalLength?.() || 2 * (w - h) + Math.PI * h;
+      if (!length) return;
+      const repeats = Math.max(1, Math.round(length / DASH_PERIOD));
+      const period = length / repeats;
+      ringRect.style.strokeDasharray = `${period * DASH_SHARE} ${period * (1 - DASH_SHARE)}`;
+      ringRect.style.setProperty('--period', `${period}px`);
+    };
+    if (ring) {
+      fitRing();
+      new ResizeObserver(fitRing).observe(ring);
+      document.fonts?.ready.then(fitRing);
+    }
     const signupNote = live.querySelector<HTMLElement>('.signup-note')!;
     let shown: Ev | null = null;
     let open = false;
@@ -166,22 +200,34 @@ const payload = events.map((e) => ({
       0 18px 48px -18px rgb(228 112 86 / 0.45),
       var(--shadow);
   }
-  /* "NEXT BAKE": deeper coral (cream text 5.1:1) with a gently pulsing glow */
+  /* "NEXT BAKE": deeper coral (cream text 5.1:1) with dashes slowly
+     circling it (sized in the script above; still under reduced motion) */
   .next-pill {
+    position: relative;
     padding: 0.4em 1.15em;
     background: var(--coral-text);
     font-size: 0.85rem;
-    box-shadow:
-      0 0 0 4px rgb(248 151 128 / 0.25),
-      0 0 22px 2px rgb(244 120 90 / 0.55);
-    animation: pill-glow 2.4s ease-in-out infinite;
   }
-  @keyframes pill-glow {
-    50% {
-      box-shadow:
-        0 0 0 6px rgb(248 151 128 / 0.18),
-        0 0 30px 6px rgb(244 120 90 / 0.7);
-    }
+  .next-ring {
+    position: absolute;
+    top: -7px;
+    left: -7px;
+    width: calc(100% + 14px);
+    height: calc(100% + 14px);
+    max-width: none; /* the site-wide svg rule caps width at 100% */
+    overflow: visible;
+    pointer-events: none;
+  }
+  .next-ring rect {
+    fill: none;
+    stroke: var(--coral);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-dasharray: 15 9; /* the script fine-tunes these to fit the ring exactly */
+    animation: march 1.6s linear infinite;
+  }
+  @keyframes march {
+    to { stroke-dashoffset: calc(-1 * var(--period, 24px)); } /* exactly one dash + gap */
   }
   .cd-title {
     margin: 14px 0 4px;
