@@ -2,8 +2,9 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  // Update once a custom domain (e.g. bakingbad.odus.princeton.edu) is approved.
-  site: 'https://bakingbad.pages.dev',
+  // The live URL (used for link previews/canonical links). Update if the
+  // Worker or account subdomain is renamed, or a Princeton address is set up.
+  site: 'https://princeton.bakinbad.workers.dev',
   trailingSlash: 'ignore',
   build: { format: 'directory' },
 });

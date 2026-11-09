@@ -1,5 +1,5 @@
-# Cloudflare Pages response headers for static files.
-# (Photos under /media/* are served by functions/media/[[path]].ts, which sets its own.)
+# Response headers for the static site files (Cloudflare Workers static assets).
+# (Photos under /media/* are served by worker/index.ts, which sets its own.)
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
