@@ -32,12 +32,12 @@ const letters = (word: string) => [...word];
     const frame = intro.querySelector<HTMLElement>('.frame')!;
     const img = frame.querySelector('img')!;
 
-    const FRAME_MS = 45; // time on each photo
-    const LOGO_MS = 120; // logo visible (and still growing) before the screen starts clearing
-    const REVEAL_MS = 520; // window grows from frame size to fill the screen
+    const FRAME_MS = 25; // time on each photo
+    const LOGO_MS = 50; // logo visible (and still growing) before the screen starts clearing
+    const REVEAL_MS = 330; // window grows from frame size to fill the screen
     const SIZE_START = 0.6; // frame size when photos start, × its normal size
-    const RATE_START = 0.7; // initial growth rate (per second, in log space: ~+23% in 0.3s)
-    const CURVE = 8; // how sharply growth accelerates toward the end
+    const RATE_START = 0.5; // initial growth rate (per second, in log space: ~+23% in 0.3s)
+    const CURVE = 9; // how sharply growth accelerates toward the end
 
     let finished = false;
     let raf = 0;
@@ -124,7 +124,7 @@ const letters = (word: string) => [...word];
           const v = (t - revealAt) / REVEAL_MS;
           setHole(cx, cy, size);
           clone!.style.transform = `scale(${size / base})`;
-          clone!.style.opacity = String(1 - Math.min(v / 0.55, 1) ** 2);
+          clone!.style.opacity = String(1 - Math.min(v / 0.35, 1) ** 2); // logo fades in the first third
           if (v >= 1) return done();
         }
         raf = requestAnimationFrame(tick);
@@ -164,7 +164,7 @@ const letters = (word: string) => [...word];
       ),
     );
     const fonts = document.fonts?.load('1em Pacifico').catch(() => {}) ?? Promise.resolve();
-    const timeout = new Promise((res) => setTimeout(res, 1200));
+    const timeout = new Promise((res) => setTimeout(res, 600)); // don't wait long for slow image loads
 
     Promise.race([Promise.all([preload, fonts]), timeout]).then(() => {
       if (finished) return;
@@ -228,7 +228,7 @@ const letters = (word: string) => [...word];
   }
   .play .ch > span {
     transform: none;
-    transition: transform 0.45s var(--ease-out) calc(var(--i) * 30ms);
+    transition: transform 0.3s var(--ease-out) calc(var(--i) * 18ms);
   }
 
   .frame {
