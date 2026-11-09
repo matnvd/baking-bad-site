@@ -1278,7 +1278,7 @@
     },
     {
       "event": "2026-10-29-sase",
-      "label": "Wrapping daifuku",
+      "label": "Daifuku wrapping",
       "src": "/media/videos/f5b889d3546d-540.mp4",
       "poster": "/media/videos/f5b889d3546d-540.webp",
       "w": 540,
@@ -1286,25 +1286,25 @@
     },
     {
       "event": "2026-04-03-pfc",
-      "label": "Banana leaves for bibingka",
+      "label": "Bibingka leaves",
       "src": "/media/videos/cdd3a998d1e3-540.mp4",
       "poster": "/media/videos/cdd3a998d1e3-540.webp",
       "w": 540,
       "h": 960
     },
     {
-      "event": "2026-11-05-cla",
-      "label": "Black sesame, inside",
-      "src": "/media/videos/43015eaed96c-540.mp4",
-      "poster": "/media/videos/43015eaed96c-540.webp",
+      "event": "2026-10-03-snap",
+      "label": "Coconut covering",
+      "src": "/media/videos/4e403b49976d-540.mp4",
+      "poster": "/media/videos/4e403b49976d-540.webp",
       "w": 540,
       "h": 960
     },
     {
-      "event": "2026-10-03-snap",
-      "label": "Rolling in coconut",
-      "src": "/media/videos/4e403b49976d-540.mp4",
-      "poster": "/media/videos/4e403b49976d-540.webp",
+      "event": "2026-11-05-cla",
+      "label": "Final reveal",
+      "src": "/media/videos/43015eaed96c-540.mp4",
+      "poster": "/media/videos/43015eaed96c-540.webp",
       "w": 540,
       "h": 960
     }
