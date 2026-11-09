@@ -22,40 +22,32 @@ import { site } from '../data/site';
   </section>
 
   <section class="wrap" aria-labelledby="steps">
-    <h2 id="steps">Joining, in four steps</h2>
+    <h2 id="steps">Joining, in three steps</h2>
     <ol class="steps">
       <li>
         <span class="num" aria-hidden="true">1</span>
         <div>
-          <h3>Say hi</h3>
+          <h3>Say hi and ask questions!</h3>
           <p>
-            Join the <ExternalLink href={site.groupme}>GroupMe</ExternalLink> and follow{' '}
-            <ExternalLink href={site.instagram.url}>{site.instagram.handle}</ExternalLink> for bake announcements.
+            Join the <ExternalLink href={site.groupme}>GroupMe</ExternalLink> for the latest updates and also follow{' '}
+            <ExternalLink href={site.instagram.url}>{site.instagram.handle}</ExternalLink> on Instagram for announcements and recaps.
           </p>
         </div>
       </li>
       <li>
         <span class="num" aria-hidden="true">2</span>
         <div>
-          <h3>Pick a bake</h3>
-          <p>The <a href="/">countdown on the home page</a> always shows what's next.</p>
+          <h3>Sign up!?</h3>
+          <p>
+            Sign-ups for the next bake will drop live <a href="/">here</a> on the site (limited spots so be fast!). Sign-up with a friend or pair with someone the night of.
+          </p>
         </div>
       </li>
       <li>
         <span class="num" aria-hidden="true">3</span>
         <div>
-          <h3>Sign up</h3>
-          <p>
-            Sign-ups for each bake will open here on the website (coming soon). Join the{' '}
-            <ExternalLink href={site.groupme}>GroupMe</ExternalLink> to hear the moment they open.
-          </p>
-        </div>
-      </li>
-      <li>
-        <span class="num" aria-hidden="true">4</span>
-        <div>
-          <h3>Claim a workspace</h3>
-          <p>Grab a spot and do it all: whisk, roll, decorate, and taste-test.</p>
+          <h3>Start baking :)</h3>
+          <p>Grab a spot and do it all: whisk, roll, decorate, and taste-test. We'll provide the recipes, ingredients, and experienced bake leads; you have fun!</p>
         </div>
       </li>
     </ol>
@@ -109,7 +101,7 @@ import { site } from '../data/site';
 
   .steps {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 14px;
     margin: 18px 0 0;
     padding: 0;
@@ -140,7 +132,6 @@ import { site } from '../data/site';
   }
   .steps li:nth-child(2) .num { background: var(--coral); }
   .steps li:nth-child(3) .num { background: var(--blush); }
-  .steps li:nth-child(4) .num { background: #fde3c8; }
 
   .facts {
     display: grid;
@@ -152,8 +143,8 @@ import { site } from '../data/site';
   dt { font-family: var(--font-display); font-weight: 700; margin-bottom: 4px; }
   dd { margin: 0; font-size: 0.95rem; color: var(--ink-soft); }
 
-  @media (max-width: 960px) {
-    .steps { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 760px) {
+    .steps { grid-template-columns: 1fr; }
   }
   @media (max-width: 560px) {
     .head { flex-direction: column-reverse; align-items: flex-start; }
