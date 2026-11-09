@@ -3,7 +3,10 @@
 // then kept honest in the browser: it skips events that have ended (static
 // pages go stale) and ticks every second.
 // Time known → days / hrs / min / sec. Time TBA → "N days to go".
-// Phase 2: replace Date.now() with server time from the signup Worker.
+// The Sign up button stays grayed out until the timer hits zero (events with
+// a TBA time never unlock it). Phase 2: point it at the real sign-up flow,
+// count down to `signup.opensAt` instead of the start time, and replace
+// Date.now() with server time from the signup Worker.
 import type { EventView } from '../lib/events';
 import { site } from '../data/site';
 import ExternalLink from './ExternalLink.astro';
@@ -40,6 +43,17 @@ const payload = events.map((e) => ({
       <div class="tile timed" data-unit="seconds"><span class="num">–</span><span class="unit">sec</span></div>
       <p class="cd-now">Happening now!</p>
     </div>
+    <div class="cd-signup">
+      <button type="button" class="btn signup-btn" aria-disabled="true" aria-describedby="cd-signup-lock">
+        <svg class="lock" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4.5" y="10.5" width="15" height="10.5" rx="2.5" fill="currentColor" stroke="none" />
+          <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" />
+        </svg>
+        Sign up
+      </button>
+      <span id="cd-signup-lock" class="sr-only">Locked until the countdown ends</span>
+      <p class="signup-note" aria-live="polite"></p>
+    </div>
     <p class="cd-then" hidden={!then}>Then: <strong>{then?.displayTitle}</strong> · <span>{then?.dateLabel}</span></p>
   </div>
 
@@ -66,7 +80,25 @@ const payload = events.map((e) => ({
     const then = live.querySelector<HTMLElement>('.cd-then')!;
     const num = (unit: string) => clock.querySelector<HTMLElement>(`[data-unit="${unit}"] .num`)!;
     const unitLabel = clock.querySelector<HTMLElement>('[data-unit="days"] .unit')!;
+    const signup = live.querySelector<HTMLButtonElement>('.signup-btn')!;
+    const signupNote = live.querySelector<HTMLElement>('.signup-note')!;
     let shown: Ev | null = null;
+    let open = false;
+
+    const setOpen = (isOpen: boolean) => {
+      if (isOpen === open) return;
+      open = isOpen;
+      signup.setAttribute('aria-disabled', String(!isOpen));
+      if (isOpen) signup.removeAttribute('aria-describedby');
+      else signup.setAttribute('aria-describedby', 'cd-signup-lock');
+      signup.classList.toggle('is-open', isOpen);
+      signupNote.textContent = '';
+    };
+    signup.addEventListener('click', () => {
+      if (!open) return;
+      // TODO(phase 2): go to the real sign-up form.
+      signupNote.textContent = 'Online sign-up is coming soon. Watch the GroupMe for the link!';
+    });
 
     // Phase 2 hook: swap for a server-synced clock.
     const now = () => Date.now();
@@ -102,6 +134,7 @@ const payload = events.map((e) => ({
 
       const ms = Date.parse(ev.start) - t;
       clock.classList.toggle('now', ms <= 0 && ev.timeKnown);
+      setOpen(ev.timeKnown && ms <= 0);
       if (ev.timeKnown) {
         const s = Math.max(0, Math.floor(ms / 1000));
         num('days').textContent = String(Math.floor(s / 86400));
@@ -194,6 +227,32 @@ const payload = events.map((e) => ({
   .tba .timed { display: none; }
   .tba .tile { flex-basis: clamp(124px, 30vw, 150px); }
   .tba .num { font-size: clamp(2.1rem, 6vw, 2.8rem); }
+  .cd-signup { margin-top: 20px; }
+  .signup-btn {
+    min-width: 180px;
+    justify-content: center;
+    background: var(--coral);
+    color: var(--ink);
+  }
+  /* locked: grayed out until the countdown ends */
+  .signup-btn[aria-disabled='true'] {
+    background: #ece6e1;
+    color: #8f847c;
+    border-color: #e2dbd5;
+    cursor: not-allowed;
+  }
+  .signup-btn[aria-disabled='true']:hover { transform: none; }
+  .signup-btn.is-open { animation: unlock 0.5s var(--ease-out); }
+  .signup-btn.is-open:hover { background: #f6876d; }
+  @keyframes unlock {
+    0% { transform: scale(0.94); }
+    60% { transform: scale(1.06); }
+    100% { transform: none; }
+  }
+  .lock { flex: none; margin-top: -2px; }
+  .signup-btn.is-open .lock { display: none; }
+  .signup-note { margin: 8px 0 0; font-size: 0.85rem; color: var(--ink-soft); }
+  .signup-note:empty { display: none; }
   .cd-then { margin: 18px 0 0; font-size: 0.92rem; color: var(--ink-soft); }
   .cd-then[hidden] { display: none; }
   .cd-now { display: none; margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; }

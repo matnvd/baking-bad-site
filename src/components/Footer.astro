@@ -15,7 +15,7 @@ const [odusA, odusB] = site.odusStatement.split(/ (?=of identity)/);
       <Image src={logo} alt="" width={128} height={128} class="logo" />
       <div>
         <p class="name script">Baking Bad</p>
-        <p class="muted small">Princeton University · since {site.since}</p>
+        <p class="muted small">Princeton University · baking since {site.since}</p>
       </div>
     </div>
 
@@ -23,7 +23,7 @@ const [odusA, odusB] = site.odusStatement.split(/ (?=of identity)/);
       <ul>
         {nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
         <li><ExternalLink href={site.instagram.url}>Instagram</ExternalLink></li>
-        <li><a href={`mailto:${site.email}`}>Email us</a></li>
+        <li><ExternalLink href={`mailto:${site.email}`}>Email us</ExternalLink></li>
       </ul>
     </nav>
 

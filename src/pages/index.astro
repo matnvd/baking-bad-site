@@ -28,8 +28,10 @@ const titleLines = ["Princeton's", 'all-inclusive', 'student', 'baking club.'];
     <div class="wrap hero-grid">
       <div class="hero-text">
         <div class="hero-head">
-          <Image src={logo} alt="Baking Bad logo: a tiger cub holding a whisk, since 2025" width={400} height={411} class="hero-logo" loading="eager" fetchpriority="high" />
-          <h1>{titleLines.map((line) => <span class="line">{line} </span>)}</h1>
+          <Image src={logo} alt="Baking Bad logo: a tiger cub holding a whisk, Baking since 2025" width={400} height={411} class="hero-logo" loading="eager" fetchpriority="high" />
+          <div class="title-box">
+            <h1>{titleLines.map((line) => <span class="line">{line} </span>)}</h1>
+          </div>
         </div>
         <p class="lede">Themed bake nights, cultural collabs, free baked goods. No experience needed.</p>
         <div class="btn-row">
@@ -97,12 +99,19 @@ const titleLines = ["Princeton's", 'all-inclusive', 'student', 'baking club.'];
     height: auto;
     filter: drop-shadow(0 10px 18px rgb(168 116 72 / 0.25));
   }
+  /* The heading always stays 4 lines: its size follows the width of its own
+     box (longest line ≈ 6.1em in Feather Bold), capped at the usual h1 size. */
+  .title-box {
+    flex: 1;
+    min-width: 0;
+    container-type: inline-size;
+  }
   h1 {
     margin: 0;
-    font-size: clamp(1.9rem, 3.6vw, 2.9rem);
-    line-height: 1.1;
+    font-size: min(2.9rem, 15.5cqi);
+    line-height: 1.25;
   }
-  .line { display: block; }
+  .line { display: block; white-space: nowrap; }
   .line:first-child,
   .line:last-child { margin-left: calc(var(--hug) * -1); }
   .lede { margin-bottom: 22px; font-size: 1.1rem; color: var(--ink-soft); }
@@ -144,6 +153,7 @@ const titleLines = ["Princeton's", 'all-inclusive', 'student', 'baking club.'];
     .hero-grid { grid-template-columns: 1fr; }
     .hero-text { text-align: center; }
     .hero-head { flex-direction: column; gap: 12px; }
+    .title-box { align-self: stretch; }
     .hero-logo { width: 140px; }
     .line:first-child,
     .line:last-child { margin-left: 0; }
