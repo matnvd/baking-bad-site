@@ -1,10 +1,17 @@
 // Officer rosters, newest term first. To add next year's team, put a new
 // object at the top of `terms`; the previous team automatically moves to
 // "Past teams" on /team.
+//
+// Headshots (optional): drop a square JPG/PNG into src/assets/officers/
+// named after the officer, e.g. "Vivian Li" → vivian-li.jpg, and it shows up
+// on /team automatically. To use a different filename, set `photo`.
+// Officers without a photo get their initials instead.
 
 export interface Officer {
   name: string;
   role: string;
+  /** optional headshot filename in src/assets/officers/ (defaults to the officer's name, e.g. vivian-li.jpg) */
+  photo?: string;
 }
 
 export interface Term {
