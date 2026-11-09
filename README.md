@@ -1,16 +1,16 @@
 # Baking Bad: club website
 
-The website for **Baking Bad**, Princeton's all-inclusive student baking club. It replaces the old WordPress site at `bakingbad.odus.princeton.edu` (see `cc-plans/baking-bad-website-plan.md` for the why and the ODUS/domain plan).
+The website for **Baking Bad**, Princeton's all-inclusive student baking club. It replaces the old WordPress site at `bakingbad.odus.princeton.edu`.
 
-- **Pages:** Home (intro animation, countdown to the next bake, bake-night video loops, rotating Collabs and Bake nights carousels), Team, Join (how to join + basic info).
-- **Stack:** [Astro](https://astro.build) + TypeScript, built to static HTML and hosted on **Cloudflare Pages**. Event photos live in **Cloudflare R2** and are served at `/media/*` by a small Pages Function.
+- **Pages:** Home (intro animation, countdown to the next bake with a locked Sign up button, bake-night video loops, rotating Collabs and Bake nights carousels), Team, Join (how to join + basic info).
+- **Stack:** [Astro](https://astro.build) + TypeScript, built to static HTML and hosted on **Cloudflare Pages**. Event photos and video loops live in **Cloudflare R2** and are served at `/media/*` by a small Pages Function.
 - **Why static-first:** pages are pre-built and cached at Cloudflare's edge, so a traffic spike at signup time costs nothing. Anything live (countdown sync, signups, spots remaining) goes through small backend endpoints. See [Roadmap](#roadmap).
 
 ---
 
 ## Run it locally
 
-Requires Node 22+ (macOS if you need to process new iPhone photos).
+Requires Node 22.23 or newer (macOS + ffmpeg if you need to process new iPhone photos and videos).
 
 ```sh
 npm install
@@ -59,14 +59,14 @@ partnerShort: VSA                          # collabs: shown as "BB × VSA"
 bake: Pandan honeycomb cake (bánh bò nướng)  # what we made (optional)
 ```
 
-Commit and push. Cloudflare rebuilds in about a minute. (If `npm run dev` ever shows outdated event data after editing `content.config.ts`, run `npm run clean` and restart it.) The countdown picks the next event automatically, and past events move from "Coming up" into Collaborations or Bake nights on their own (no rebuild needed for that). Always quote `time` values.
+Always quote `time` values. Commit and push; Cloudflare rebuilds in about a minute. The countdown always shows the next upcoming event (and the one after it), and moves on by itself once an event ends. Past events appear in the Collabs or Bake nights carousels after the next rebuild. (If `npm run dev` ever shows outdated event data after editing `content.config.ts`, run `npm run clean` and restart it.)
 
 ### Add photos for an event
 
 1. Put the event's originals in `media/bake_nights/<folder>/` (same folders as the shared Drive).
 2. Pick photos: `node scripts/contact-sheets.mjs` makes numbered contact sheets in `/tmp/bakingbad-sheets/` (with an `index.txt` mapping numbers to filenames).
 3. Add the event to `scripts/photo-picks.json`: the folder name and the chosen filenames, **first one = cover**. To add a frame to the intro animation, add it to `loader` too.
-   For a video loop on the home page, add `{ "event", "file": "IMG_1234.MOV", "start": 1.5, "duration": 6, "label": "Piping tartelettes" }` to `videos` (keep it to 5–7 seconds; it's cropped to vertical 9:16 and muted).
+   For a video loop on the home page, add an entry like `{ "event": "2026-04-30-french-francophone-society", "file": "IMG_3920.MOV", "start": 1, "duration": 6, "label": "Piping tartelettes" }` to `videos` (start/duration in seconds; keep it 5–7 s; it's cropped to vertical 9:16 and muted). The event must also be listed under `events`.
 4. `npm run photos:build` converts them to web sizes (AVIF + WebP at 480/960/1600 px; videos as 540×960 MP4 + poster) in `public/media/` and updates `src/data/photos.json`. Needs ffmpeg for videos (`brew install ffmpeg`).
 5. `npm run photos:upload` pushes the new files to R2 (needs `.env`, see below).
 6. Commit `photo-picks.json` and `photos.json`, then push.
@@ -85,14 +85,25 @@ Edit `src/data/officers.ts`. Add the new term at the **top** of `terms`; the pre
 
 ## One-time Cloudflare setup
 
-1. **R2 bucket:** Cloudflare dashboard → R2 → *Create bucket* → name it `bakingbad-media`.
-2. **Upload credentials:** R2 → *Manage API tokens* → *Create token* with **Object Read & Write** on `bakingbad-media`. Copy `.env.example` to `.env` and fill in the account ID and keys. Then run `npm run photos:upload`.
-3. **Pages project:** Workers & Pages → *Create* → *Pages* → connect this GitHub repo.
-   - Build command: `npm run build`
-   - Output directory: `dist`
-   - The R2 binding (`MEDIA` → `bakingbad-media`) comes from `wrangler.toml` automatically.
-4. The site goes live at `https://bakingbad.pages.dev` (or whatever name is free). Update `site` in `astro.config.mjs` to match.
-5. Once ODUS approves, add `bakingbad.odus.princeton.edu` under the project's *Custom domains* **before** OIT adds the DNS record.
+Cloudflare renames dashboard items now and then. If a label below doesn't match, use the dashboard search (**Cmd/Ctrl + K**). Steps checked against Cloudflare's docs in Nov 2026.
+
+1. **Create the R2 bucket `bakingbad-media`.** In the dashboard: **R2 Object Storage** → create a bucket with exactly that name. Or from this folder: `npx wrangler login`, then `npx wrangler r2 bucket create bakingbad-media`. (R2 may ask for a payment method the first time; the free tier still applies. Leave public access / `r2.dev` off: the site reads the bucket directly.)
+2. **Copy your Account ID:** press **Cmd/Ctrl + K** in the dashboard and run **Copy account ID** (also under **Workers & Pages** → **Account Details** → copy button next to **Account ID**).
+3. **Make upload credentials.** Either option works with `npm run photos:upload`:
+   - **Option 1, an API token (simplest):** create a Cloudflare API token (search the dashboard for **API Tokens**; use a custom token) with an **Account** permission for **Workers R2 Storage** at the **Edit** level (some screens may say Write), limited to your account. Copy the token value (shown only once) into `CLOUDFLARE_API_TOKEN`. The upload script turns it into the S3 keys R2 expects (Cloudflare's documented method: key ID = the token's id, secret = SHA-256 of the token).
+   - **Option 2, R2's own S3 keys:** **R2 Object Storage** → **Overview** → **Account Details** → **Manage** next to **API Tokens** → **Create Account API token**, permission **Object Read & Write** scoped to `bakingbad-media`. Copy the **Access Key ID** and **Secret Access Key** (shown only once) into `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY`.
+4. **Upload the media:** `cp .env.example .env`, fill in `R2_ACCOUNT_ID` plus one option above, then `npm run photos:upload`. It should end with `Done. Uploaded … file(s).` (about 640 the first time). Never commit `.env`.
+5. **Create the Pages project:** **Workers & Pages** → **Create application** → **Pages** → **Connect to Git** → **GitHub** → **Install & Authorize** → pick this repo → **Begin setup**:
+   - **Project name:** `bakingbad`. It should match `name` in `wrangler.toml`; if that name is taken, change both.
+   - **Production branch:** `main`
+   - **Framework preset:** Astro · **Build command:** `npm run build` · **Build output directory:** `dist`
+   - **Node version:** the current build image defaults to Node 22.23.4, which is what this Astro version needs at minimum. If a build ever fails on the Node version, add the environment variable `NODE_VERSION` = `22.23.4` (or newer) under **Settings** → **Environment variables**, or add a `.node-version` file.
+   - **Save and Deploy.**
+   - The photo connection (R2 binding `MEDIA` → `bakingbad-media`) comes from `wrangler.toml`. Per Cloudflare, once that file is in use you **can't edit the same fields in the dashboard**: change the file instead.
+6. Open `https://<project-name>.pages.dev`. If photos show only colored placeholders, step 4 didn't finish. If your project name isn't `bakingbad`, update `site` in `astro.config.mjs`.
+7. Once ODUS approves, add `bakingbad.odus.princeton.edu` under the project's **Custom domains** **before** OIT adds the DNS record.
+
+Every push to `main` redeploys automatically; pushing another branch gets its own preview URL.
 
 **Storage math:** each published photo is about 0.6 MB across all its sizes and each video loop about 0.5 MB, so roughly 100 MB per year at 6–8 photos per event. R2's free tier is 10 GB with free bandwidth; beyond that it's $0.015/GB-month.
 
@@ -103,10 +114,10 @@ To test the production setup locally: `npm run build && npx wrangler pages dev d
 ## Design notes
 
 - **Palette** (from the club's brand sheet): cream `#fffaf2`, blush `#f9ddd2`, apricot `#fdbb7f`, coral `#f89780`, caramel `#a87448`. Text uses darker derived shades (`--ink`, `--coral-text`, `--caramel-text` in `global.css`) so everything passes WCAG AA contrast. Use coral and apricot as fills, never for small text.
-- **Fonts:** Feather Bold (a free look-alike of Duolingo's font, CC BY 4.0, credited in the footer; keep that credit) for headings, buttons and labels; Nunito for body text; Pacifico only for the script wordmark. All self-hosted (`src/assets/fonts/`, `@fontsource`).
+- **Fonts:** Feather Bold (a free look-alike of Duolingo's font from onlinewebfonts.com, licensed CC BY 4.0, which asks for a credit link to the source) for headings, buttons and labels; Nunito for body text; Pacifico only for the script wordmark. All self-hosted (`src/assets/fonts/`, `@fontsource`).
 - **Motifs:** the logo's scalloped edge (`public/scallop.svg`, used as a CSS mask) and the seasonal tiger (santa in December, valentine in February).
 - **Intro:** plays once per browser session, skippable with any key or tap, and never plays with reduced motion or with JavaScript off.
-- **Motion:** carousels and video loops have visible pause buttons, pause when off screen, and start paused for reduced-motion users.
+- **Motion:** carousels drift continuously (the arrows or pause button stop them; they start paused for reduced-motion users). Video loops autoplay muted, pause when scrolled off screen, and have one pause button.
 - **Links** to other sites open in a new tab (`ExternalLink.astro`).
 
 ## Requirements this site must keep meeting
@@ -124,17 +135,17 @@ To test the production setup locally: `npm run build && npx wrangler pages dev d
 - A Cloudflare Worker with a **Durable Object per event**: claims are processed one at a time, so spots can never oversell, and each verified `@princeton.edu` email gets one claim.
 - **Server-clock countdown**: the countdown's `now()` (see `Countdown.astro`) switches to the Worker's time; early requests are rejected server-side.
 - Turnstile bot protection, D1 for events and signups, and a k6 load test of the drop before using it for real.
-- `/admin` behind Cloudflare Access (officer emails only) to create events, replacing the YAML files. The event schema already has a `signup` field shaped for this.
+- Point the countdown's **Sign up** button at the real form (see the `TODO(phase 2)` in `Countdown.astro`); it currently unlocks when the timer hits zero and shows a "coming soon" note.
+- `/admin` behind Cloudflare Access (officer emails only) to create events, replacing the YAML files. The event schema already has a `signup` field (`opensAt`, `capacity`) shaped for this.
 - Decision for then: Durable Objects need a Worker, so either bind a separate Worker to this Pages project, or move the site to a single Worker serving static assets (which changes the `*.pages.dev` URL).
 
 **Phase 3**
 - Scheduled GitHub Action that syncs each event's "Website picks" Drive folder → `photos:build` → R2 + manifest, so officers just drag favorites into a folder.
 - Live features over WebSockets (spots remaining, reactions).
-- Short video loops from the bake-night clips.
 
 ## Open items (marked `TODO` in the data files)
 
-- Times and kitchens for Mini Bundt Cakes (Nov 18) and the Senior Event (Dec 3).
+- Kitchen for Mini Bundt Cakes (Nov 18, 7:30 PM); time and kitchen for the Senior Event (Dec 3).
 - Contact email: currently the founding president's address from the old site.
 - Confirm the GroupMe link.
 - Confirm the "To All the Boys I've Loved Before" title (folder said TATBILB).
