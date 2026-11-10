@@ -99,7 +99,7 @@ Cloudflare renames dashboard items now and then. If a label below doesn't match,
    - **Build command:** `npm run build` · **Deploy command:** `npx wrangler deploy` (the default)
    - **Node version:** Cloudflare's build image currently uses a recent Node (builds have run on 24.x); this Astro version needs 22.23 or newer. If a build ever fails on the Node version, set the environment variable `NODE_VERSION` (e.g. `24`) in the project's build settings, or add a `.node-version` file.
    - Everything else (the static files in `dist/`, the 404 page, the `/media/*` route and the R2 binding `MEDIA` → `bakingbad-media`) comes from `wrangler.toml`.
-6. Open `https://princeton.<your-account-subdomain>.workers.dev` (currently https://princeton.bakinbad.workers.dev; the dashboard shows the exact URL). If photos show only colored placeholders, step 4 didn't finish. Update `site` in `astro.config.mjs` to the real URL.
+6. Open `https://princeton.<your-account-subdomain>.workers.dev` (currently https://princeton.bakingbad.workers.dev; the dashboard shows the exact URL). If photos show only colored placeholders, step 4 didn't finish. Update `site` in `astro.config.mjs` to the real URL.
 7. **Princeton address:** Workers custom domains only work for domains whose DNS is on your own Cloudflare account, and `princeton.edu` is run by OIT. So ask ODUS/OIT for the **redirect** option (the Princeton address forwards to the workers.dev URL), which the domain policy explicitly allows. If they'll only do a CNAME, the site would need to move to Cloudflare Pages (which supports external CNAMEs) with the `/media` code as a Pages Function; ask in the repo history for the Pages version of `wrangler.toml`.
 
 Every push to `main` builds and redeploys automatically.
