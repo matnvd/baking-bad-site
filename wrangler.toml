@@ -1,19 +1,12 @@
-# Cloudflare Worker config. Cloudflare's Git builds run `npm run build`, then
-# `npx wrangler deploy`, which reads this file.
-# `name` must match the Worker project's name in the Cloudflare dashboard.
-name = "princeton"
-main = "worker/index.ts"
+# Cloudflare Pages project config. Pages reads this when it builds from git,
+# so the R2 binding below is set up automatically.
+# `name` must match the Pages project name in the dashboard.
+name = "bakingbad"
+pages_build_output_dir = "./dist"
 compatibility_date = "2026-11-01"
 
-# The built site. Cloudflare serves these files directly (fast, free); only
-# requests matching run_worker_first reach worker/index.ts.
-[assets]
-directory = "./dist"
-binding = "ASSETS"
-not_found_handling = "404-page"
-run_worker_first = ["/media/*"]
-
-# Event photos and video loops (see scripts/upload-photos.mjs)
+# Event photos and video loops (see scripts/upload-photos.mjs and
+# functions/media/[[path]].ts)
 [[r2_buckets]]
 binding = "MEDIA"
 bucket_name = "bakingbad-media"

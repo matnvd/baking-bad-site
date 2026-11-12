@@ -8,6 +8,6 @@
     "dist",
     "media",
     "public/media",
-    "worker"
+    "functions"
   ]
 }

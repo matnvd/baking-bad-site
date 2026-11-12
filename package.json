@@ -7,7 +7,7 @@
     "dev": "astro dev",
     "build": "npm run check && astro build",
     "preview": "astro preview",
-    "check": "astro check && tsc -p worker",
+    "check": "astro check && tsc -p functions",
     "brand": "node scripts/prepare-brand.mjs",
     "photos:build": "node scripts/build-photos.mjs",
     "photos:upload": "node --env-file=.env scripts/upload-photos.mjs",

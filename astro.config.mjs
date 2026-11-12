@@ -2,9 +2,9 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  // The live URL (used for link previews/canonical links). Update if the
-  // Worker or account subdomain is renamed, or a Princeton address is set up.
-  site: 'https://princeton.bakingbad.workers.dev',
+  // The live URL (used for link previews/canonical links). OIT points this
+  // Princeton address at the Cloudflare Pages project with a CNAME record.
+  site: 'https://bakingbad.odus.princeton.edu',
   trailingSlash: 'ignore',
   build: { format: 'directory' },
 });

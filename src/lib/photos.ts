@@ -2,7 +2,7 @@ import manifest from '../data/photos.json';
 
 // Photos are served from /media/* — locally from public/media (built by
 // `npm run photos:build`), in production from the R2 bucket via
-// worker/index.ts.
+// functions/media/[[path]].ts.
 export const MEDIA_BASE = '/media';
 
 export interface Photo {
