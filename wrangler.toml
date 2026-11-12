@@ -1,7 +1,7 @@
 # Cloudflare Pages project config. Pages reads this when it builds from git,
 # so the R2 binding below is set up automatically.
 # `name` must match the Pages project name in the dashboard.
-name = "bakingbad"
+name = "baking-bad-site"
 pages_build_output_dir = "./dist"
 compatibility_date = "2026-11-01"
 
