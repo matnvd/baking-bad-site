@@ -10,7 +10,7 @@ export const site = {
 
   // TODO(officers): confirm. This is the founding president's address from the old site;
   // swap in a current officer or a shared club inbox.
-  email: 'mr0669@princeton.edu',
+  email: 'bakinbad@princeton.edu',
   instagram: { handle: '@bakingbadprinceton', url: 'https://www.instagram.com/bakingbadprinceton/' },
   // TODO(officers): confirm this GroupMe invite link is still active.
   groupme: 'https://groupme.com/join_group/110639795/UEkznSWR',
