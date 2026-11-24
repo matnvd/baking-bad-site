@@ -1151,6 +1151,96 @@
           1600
         ]
       }
+    ],
+    "2026-11-18-mini-bundt-cakes": [
+      {
+        "id": "2026-11-18-mini-bundt-cakes/ee1ac18208a1",
+        "w": 4284,
+        "h": 5712,
+        "color": "#afa199",
+        "widths": [
+          480,
+          960,
+          1600
+        ]
+      },
+      {
+        "id": "2026-11-18-mini-bundt-cakes/379061254643",
+        "w": 4284,
+        "h": 5712,
+        "color": "#a7988f",
+        "widths": [
+          480,
+          960,
+          1600
+        ]
+      },
+      {
+        "id": "2026-11-18-mini-bundt-cakes/87511f5917b3",
+        "w": 4284,
+        "h": 5712,
+        "color": "#9b938f",
+        "widths": [
+          480,
+          960,
+          1600
+        ]
+      },
+      {
+        "id": "2026-11-18-mini-bundt-cakes/875956846175",
+        "w": 4284,
+        "h": 5712,
+        "color": "#a1988d",
+        "widths": [
+          480,
+          960,
+          1600
+        ]
+      },
+      {
+        "id": "2026-11-18-mini-bundt-cakes/3054d2b913b5",
+        "w": 4284,
+        "h": 5712,
+        "color": "#978d87",
+        "widths": [
+          480,
+          960,
+          1600
+        ]
+      },
+      {
+        "id": "2026-11-18-mini-bundt-cakes/7836518847ec",
+        "w": 4284,
+        "h": 5712,
+        "color": "#9f9389",
+        "widths": [
+          480,
+          960,
+          1600
+        ]
+      },
+      {
+        "id": "2026-11-18-mini-bundt-cakes/d07eda065722",
+        "w": 4284,
+        "h": 5712,
+        "color": "#988e87",
+        "widths": [
+          480,
+          960,
+          1600
+        ]
+      },
+      {
+        "id": "2026-11-18-mini-bundt-cakes/330d5316d5aa",
+        "w": 3024,
+        "h": 4032,
+        "color": "#938f87",
+        "widths": [
+          480,
+          960,
+          1600
+        ]
+      }
     ]
   },
   "loader": [
@@ -1278,7 +1368,7 @@
     },
     {
       "event": "2026-10-29-sase",
-      "label": "Mooncake wrapping",
+      "label": "Wrapping mooncakes",
       "src": "/media/videos/f5b889d3546d-540.mp4",
       "poster": "/media/videos/f5b889d3546d-540.webp",
       "w": 540,
@@ -1286,25 +1376,25 @@
     },
     {
       "event": "2026-04-03-pfc",
-      "label": "Bibingka leaves",
+      "label": "Bibingka banana leaves",
       "src": "/media/videos/cdd3a998d1e3-540.mp4",
       "poster": "/media/videos/cdd3a998d1e3-540.webp",
       "w": 540,
       "h": 960
     },
     {
-      "event": "2026-10-03-snap",
-      "label": "Coconut covering",
-      "src": "/media/videos/4e403b49976d-540.mp4",
-      "poster": "/media/videos/4e403b49976d-540.webp",
+      "event": "2026-11-05-cla",
+      "label": "Black sesame showcase",
+      "src": "/media/videos/43015eaed96c-540.mp4",
+      "poster": "/media/videos/43015eaed96c-540.webp",
       "w": 540,
       "h": 960
     },
     {
-      "event": "2026-11-05-cla",
-      "label": "Final reveal",
-      "src": "/media/videos/43015eaed96c-540.mp4",
-      "poster": "/media/videos/43015eaed96c-540.webp",
+      "event": "2026-10-03-snap",
+      "label": "Coconut coverings",
+      "src": "/media/videos/4e403b49976d-540.mp4",
+      "poster": "/media/videos/4e403b49976d-540.webp",
       "w": 540,
       "h": 960
     }
