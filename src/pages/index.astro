@@ -47,17 +47,17 @@ const titleLines = ["Princeton's", 'all-inclusive', 'student', 'baking club.'];
     <VideoReel />
 
     {
-      collabs.length > 0 && (
-        <Carousel id="collabs" title="Collabs" subtitle="Campus groups teach us a recipe from home. Tap for photos.">
-          {collabs.map((e) => <EventPhotoCard event={e} />)}
+      nights.length > 0 && (
+        <Carousel id="nights" title="Bake nights" subtitle="Movie themes, holidays, and whatever's in season." speed={26}>
+          {nights.map((e) => <EventPhotoCard event={e} />)}
         </Carousel>
       )
     }
 
     {
-      nights.length > 0 && (
-        <Carousel id="nights" title="Bake nights" subtitle="Movie themes, holidays, and whatever's in season." speed={26}>
-          {nights.map((e) => <EventPhotoCard event={e} />)}
+      collabs.length > 0 && (
+        <Carousel id="collabs" title="Collabs" subtitle="Campus groups teach us a recipe from home. Tap for photos.">
+          {collabs.map((e) => <EventPhotoCard event={e} />)}
         </Carousel>
       )
     }
